@@ -30,6 +30,11 @@ with col1:
             nome = st.text_input("Nome do Pet")
             especie = st.selectbox("Espécie", ["Cachorro", "Gato", "Ave", "Roedor", "Outros"])
             raca = st.text_input("Raça")
+            col_idade, col_peso = st.columns(2)
+            with col_idade:
+                idade = st.number_input("Idade (anos)", min_value=0, step=1, value=None)
+            with col_peso:
+                peso = st.number_input("Peso (kg)", min_value=0.0, step=0.1, value=None, format="%.1f")
             tutor_selecionado = st.selectbox("Tutor", options=list(tutores_options.keys()), format_func=lambda x: tutores_options[x])
             
             submit = st.form_submit_button("Salvar Pet", type="primary", width="stretch")
@@ -45,6 +50,8 @@ with col1:
                         "nome": nome,
                         "especie": especie,
                         "raca": raca,
+                        "idade": idade,
+                        "peso": peso,
                         "tutor_id": tutor_selecionado
                     })
                     st.success(f"Pet {nome} cadastrado com sucesso!")

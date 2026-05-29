@@ -76,6 +76,8 @@ def create_pet(dados):
             "nome": dados["nome"],
             "especie": dados["especie"],
             "raca": dados.get("raca", ""),
+            "idade": dados.get("idade"),
+            "peso": dados.get("peso"),
             "cliente_id": dados["tutor_id"]
         }
         response = requests.post(f"{BASE_URL}/pets/", json=payload, timeout=5)
@@ -121,9 +123,16 @@ def create_consulta(dados):
             "descricao": dados.get("data", ""),
             "pet_id": dados["pet_id"]
         }
-        response = requests.post(f"{BASE_URL}/atendimentos/", json=payload)
-        return response.json() if response.status_code == 201 else None
+        response = requests.post(f"{BASE_URL}/atendimentos/", json=payload, timeout=5)
+        if response.status_code == 201:
+            st.cache_data.clear()
+            return response.json()
+        else:
+            erro = response.json().get("detail", "Erro ao agendar consulta.")
+            st.error(f"Erro: {erro}")
+            return None
     except requests.exceptions.ConnectionError:
+        st.error("Erro ao conectar com a API.")
         return None
 
 def get_usuarios():
