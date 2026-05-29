@@ -33,22 +33,26 @@ def login(email, senha):
         st.error("Erro de conexão: Garanta que o backend FastAPI está rodando na porta 8000!")
         return None
 
+@st.cache_data(ttl=30)
 def get_tutores():
     try:
         response = requests.get(f"{BASE_URL}/clientes/")
         return response.json() if response.status_code == 200 else []
     except requests.exceptions.ConnectionError:
-        st.error("Erro ao conectar com a API.")
         return []
 
 def create_tutor(dados):
     try:
         response = requests.post(f"{BASE_URL}/clientes/", json=dados)
-        return response.json() if response.status_code == 201 else None
+        if response.status_code == 201:
+            st.cache_data.clear()
+            return response.json()
+        return None
     except requests.exceptions.ConnectionError:
         st.error("Erro ao conectar com a API.")
         return None
 
+@st.cache_data(ttl=30)
 def get_pets():
     try:
         response = requests.get(f"{BASE_URL}/pets/")
@@ -71,27 +75,29 @@ def create_pet(dados):
             "cliente_id": dados["tutor_id"]
         }
         response = requests.post(f"{BASE_URL}/pets/", json=payload)
-        return response.json() if response.status_code == 201 else None
+        if response.status_code == 201:
+            st.cache_data.clear()
+            return response.json()
+        return None
     except requests.exceptions.ConnectionError:
         return None
 
+@st.cache_data(ttl=30)
 def get_consultas():
     try:
         response = requests.get(f"{BASE_URL}/atendimentos/")
         if response.status_code == 200:
             consultas = response.json()
             
-            # Buscar pets para mapear o nome na tabela
-            pets_resp = requests.get(f"{BASE_URL}/pets/")
-            pets_map = {}
-            if pets_resp.status_code == 200:
-                pets_map = {p["id"]: p["nome"] for p in pets_resp.json()}
+            # Reutilizar o cache de pets ao invés de fazer outra request
+            pets = get_pets()
+            pets_map = {p["id"]: p["nome"] for p in pets}
                 
             for c in consultas:
                 c["pet"] = pets_map.get(c["pet_id"], "Desconhecido")
                 c["status"] = "Agendada"
                 if "descricao" in c and c["descricao"]:
-                    c["data"] = c["descricao"] # Restaurando a data agendada salva na descrição
+                    c["data"] = c["descricao"]
             return consultas
         return []
     except requests.exceptions.ConnectionError:
@@ -101,14 +107,18 @@ def create_consulta(dados):
     try:
         payload = {
             "motivo": dados["motivo"],
-            "descricao": dados.get("data", ""), # Salvando a data agendada no campo descrição pois o backend marca a data de criação automaticamente
+            "descricao": dados.get("data", ""),
             "pet_id": dados["pet_id"]
         }
         response = requests.post(f"{BASE_URL}/atendimentos/", json=payload)
-        return response.json() if response.status_code == 201 else None
+        if response.status_code == 201:
+            st.cache_data.clear()
+            return response.json()
+        return None
     except requests.exceptions.ConnectionError:
         return None
 
+@st.cache_data(ttl=30)
 def get_usuarios():
     try:
         response = requests.get(f"{BASE_URL}/usuarios/")
@@ -127,6 +137,7 @@ def create_usuario(dados):
         }
         response = requests.post(f"{BASE_URL}/usuarios/", json=payload)
         if response.status_code == 201:
+            st.cache_data.clear()
             return response.json()
         else:
             erro = response.json().get("detail", "Erro ao cadastrar usuário.")
