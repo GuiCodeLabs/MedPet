@@ -31,27 +31,27 @@ with col1:
             especie = st.selectbox("Espécie", ["Cachorro", "Gato", "Ave", "Roedor", "Outros"])
             raca = st.text_input("Raça")
             tutor_selecionado = st.selectbox("Tutor", options=list(tutores_options.keys()), format_func=lambda x: tutores_options[x])
-        
-        submit = st.form_submit_button("Salvar Pet", type="primary", width="stretch")
-        if submit:
-            erros = []
-            if not nome:
-                erros.append("O nome do pet é obrigatório.")
-            if not tutor_selecionado:
-                erros.append("Selecione um tutor válido.")
+            
+            submit = st.form_submit_button("Salvar Pet", type="primary", width="stretch")
+            if submit:
+                erros = []
+                if not nome:
+                    erros.append("O nome do pet é obrigatório.")
+                if not tutor_selecionado:
+                    erros.append("Selecione um tutor válido.")
 
-            if not erros:
-                create_pet({
-                    "nome": nome,
-                    "especie": especie,
-                    "raca": raca,
-                    "tutor_id": tutor_selecionado
-                })
-                st.success(f"Pet {nome} cadastrado com sucesso!")
-                st.rerun()
-            else:
-                for erro in erros:
-                    st.error(erro)
+                if not erros:
+                    create_pet({
+                        "nome": nome,
+                        "especie": especie,
+                        "raca": raca,
+                        "tutor_id": tutor_selecionado
+                    })
+                    st.success(f"Pet {nome} cadastrado com sucesso!")
+                    st.rerun()
+                else:
+                    for erro in erros:
+                        st.error(erro)
 
 with col2:
     st.subheader("Pets Cadastrados")

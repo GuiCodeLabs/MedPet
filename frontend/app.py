@@ -22,7 +22,6 @@ def do_login():
         st.session_state["token"] = resp["token"]
         st.session_state["perfil"] = resp["perfil"]
         st.session_state["nome"] = resp.get("nome", "Usuário")
-        st.rerun()
     else:
         st.error("E-mail ou senha inválidos. Por favor, tente novamente.")
 
