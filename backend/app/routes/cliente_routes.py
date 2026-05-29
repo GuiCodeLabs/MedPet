@@ -32,6 +32,7 @@ def obter_cliente(id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Cliente não encontrado.")
     return cliente
 
+@router.put("/{id}", response_model=ClienteResponse)
 def atualizar_cliente(id: int, cliente_in: ClienteUpdate, db: Session = Depends(get_db)):
     service = ClienteService(db)
     try:
@@ -40,6 +41,7 @@ def atualizar_cliente(id: int, cliente_in: ClienteUpdate, db: Session = Depends(
     except ValueError as e:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
     
+@router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
 def deletar_cliente(id: int, db: Session = Depends(get_db)):
     service = ClienteService(db)
     try:
