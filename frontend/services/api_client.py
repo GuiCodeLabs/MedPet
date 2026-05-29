@@ -10,7 +10,8 @@ def login(email, senha):
         # Envia a requisição com as chaves "username" e "password" que o schema do backend espera
         response = requests.post(
             f"{BASE_URL}/auth/login",
-            json={"username": email, "password": senha}
+            json={"username": email, "password": senha},
+            timeout=5
         )
         
         # Se os dados estiverem corretos no banco de dados (HTTP 200)
@@ -36,18 +37,21 @@ def login(email, senha):
 @st.cache_data(ttl=30)
 def get_tutores():
     try:
-        response = requests.get(f"{BASE_URL}/clientes/")
+        response = requests.get(f"{BASE_URL}/clientes/", timeout=5)
         return response.json() if response.status_code == 200 else []
     except requests.exceptions.ConnectionError:
         return []
 
 def create_tutor(dados):
     try:
-        response = requests.post(f"{BASE_URL}/clientes/", json=dados)
+        response = requests.post(f"{BASE_URL}/clientes/", json=dados, timeout=5)
         if response.status_code == 201:
             st.cache_data.clear()
             return response.json()
-        return None
+        else:
+            erro = response.json().get("detail", "Erro ao cadastrar tutor.")
+            st.error(f"Erro: {erro}")
+            return None
     except requests.exceptions.ConnectionError:
         st.error("Erro ao conectar com a API.")
         return None
@@ -55,7 +59,7 @@ def create_tutor(dados):
 @st.cache_data(ttl=30)
 def get_pets():
     try:
-        response = requests.get(f"{BASE_URL}/pets/")
+        response = requests.get(f"{BASE_URL}/pets/", timeout=5)
         if response.status_code == 200:
             pets = response.json()
             for pet in pets:
@@ -74,18 +78,22 @@ def create_pet(dados):
             "raca": dados.get("raca", ""),
             "cliente_id": dados["tutor_id"]
         }
-        response = requests.post(f"{BASE_URL}/pets/", json=payload)
+        response = requests.post(f"{BASE_URL}/pets/", json=payload, timeout=5)
         if response.status_code == 201:
             st.cache_data.clear()
             return response.json()
-        return None
+        else:
+            erro = response.json().get("detail", "Erro ao cadastrar pet.")
+            st.error(f"Erro: {erro}")
+            return None
     except requests.exceptions.ConnectionError:
+        st.error("Erro ao conectar com a API.")
         return None
 
 @st.cache_data(ttl=30)
 def get_consultas():
     try:
-        response = requests.get(f"{BASE_URL}/atendimentos/")
+        response = requests.get(f"{BASE_URL}/atendimentos/", timeout=5)
         if response.status_code == 200:
             consultas = response.json()
             
@@ -110,18 +118,22 @@ def create_consulta(dados):
             "descricao": dados.get("data", ""),
             "pet_id": dados["pet_id"]
         }
-        response = requests.post(f"{BASE_URL}/atendimentos/", json=payload)
+        response = requests.post(f"{BASE_URL}/atendimentos/", json=payload, timeout=5)
         if response.status_code == 201:
             st.cache_data.clear()
             return response.json()
-        return None
+        else:
+            erro = response.json().get("detail", "Erro ao agendar consulta.")
+            st.error(f"Erro: {erro}")
+            return None
     except requests.exceptions.ConnectionError:
+        st.error("Erro ao conectar com a API.")
         return None
 
 @st.cache_data(ttl=30)
 def get_usuarios():
     try:
-        response = requests.get(f"{BASE_URL}/usuarios/")
+        response = requests.get(f"{BASE_URL}/usuarios/", timeout=5)
         return response.json() if response.status_code == 200 else []
     except requests.exceptions.ConnectionError:
         return []
@@ -135,7 +147,7 @@ def create_usuario(dados):
             "perfil": dados.get("perfil", "atendente"),
             "senha": dados["senha"]
         }
-        response = requests.post(f"{BASE_URL}/usuarios/", json=payload)
+        response = requests.post(f"{BASE_URL}/usuarios/", json=payload, timeout=5)
         if response.status_code == 201:
             st.cache_data.clear()
             return response.json()
