@@ -1,0 +1,84 @@
+classDiagram
+    direction TB
+
+    %% Entidades de Modelos (Entidades SQLAlchemy)
+    class Usuario {
+        +int id
+        +string nome
+        +string email
+        +string senha_hash
+        +string perfil
+        +boolean ativo
+        +datetime criado_em
+    }
+
+    class Cliente {
+        +int id
+        +string nome
+        +string cpf
+        +string email
+        +string telefone
+        +string endereco
+        +datetime criado_em
+        +list~Pet~ pets
+    }
+
+    class Pet {
+        +int id
+        +string nome
+        +string especie
+        +string raca
+        +int idade
+        +float peso
+        +int cliente_id
+        +datetime criado_em
+        +Cliente dono
+        +list~Atendimento~ atendimentos
+    }
+
+    class Atendimento {
+        +int id
+        +string motivo
+        +string descricao
+        +int pet_id
+        +datetime data
+        +Pet pet
+    }
+
+    %% Serviços
+    class UsuarioService {
+        -Session db
+        +create(UsuarioCreate user_in) Usuario
+        +list_all() list~Usuario~
+    }
+
+    class ClienteService {
+        -Session db
+        +create(ClienteCreate cliente_in) Cliente
+        +list_all() list~Cliente~
+        +get_by_id(int id) Cliente
+    }
+
+    class PetService {
+        -Session db
+        +create(PetCreate pet_in) Pet
+        +list_all() list~Pet~
+        +list_by_owner(int cliente_id) list~Pet~
+    }
+
+    class AtendimentoService {
+        -Session db
+        +create(AtendimentoCreate atendimento_in) Atendimento
+        +list_all() list~Atendimento~
+        +list_by_pet(int pet_id) list~Atendimento~
+    }
+
+    %% Relacionamentos de Entidades
+    Cliente "1" --> "0..*" Pet : "dono de"
+    Pet "1" --> "0..*" Atendimento : "recebe"
+
+    %% Relacionamentos com os Serviços (Dependências / Chamadas)
+    UsuarioService ..> Usuario : "manipula"
+    ClienteService ..> Cliente : "manipula"
+    PetService ..> Pet : "manipula"
+    AtendimentoService ..> Atendimento : "manipula"
