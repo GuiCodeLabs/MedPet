@@ -1,0 +1,42 @@
+# Git
+.git
+.gitignore
+.github
+
+# Ambientes Virtuais (Virtual environments)
+.env
+.venv
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# Python cache e binários
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# IDEs e Editores
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Testes e Coverage
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+nosetests.xml
+coverage.xml
+
+# Bancos de dados locais (Evitar copiar o banco local para a imagem)
+*.db
+*.sqlite3
+
+# Logs
+*.log
+
