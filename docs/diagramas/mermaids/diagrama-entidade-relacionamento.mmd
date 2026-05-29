@@ -1,0 +1,43 @@
+erDiagram
+    usuarios {
+        int id PK
+        string nome "VARCHAR(100) NOT NULL"
+        string email UK "VARCHAR(120) NOT NULL"
+        string senha_hash "VARCHAR(255) NOT NULL"
+        string perfil "VARCHAR(30) NOT NULL"
+        boolean ativo "BOOLEAN NOT NULL"
+        datetime criado_em "DATETIME NOT NULL"
+    }
+
+    clientes {
+        int id PK
+        string nome "VARCHAR(100) NOT NULL"
+        string cpf UK "VARCHAR(14) NOT NULL"
+        string email UK "VARCHAR(120) NOT NULL"
+        string telefone "VARCHAR(20) NULL"
+        string endereco "VARCHAR(200) NULL"
+        datetime criado_em "DATETIME NOT NULL"
+    }
+
+    pets {
+        int id PK
+        string nome "VARCHAR(50) NOT NULL"
+        string especie "VARCHAR(30) NOT NULL"
+        string raca "VARCHAR(50) NULL"
+        int idade "INTEGER NULL"
+        float peso "FLOAT NULL"
+        int cliente_id FK "INTEGER NOT NULL"
+        datetime criado_em "DATETIME NOT NULL"
+    }
+
+    atendimentos {
+        int id PK
+        string motivo "VARCHAR(100) NOT NULL"
+        string descricao "VARCHAR(500) NULL"
+        int pet_id FK "INTEGER NOT NULL"
+        datetime data "DATETIME NOT NULL"
+    }
+
+    %% Relacionamentos
+    clientes ||--o{ pets : "possui"
+    pets ||--o{ atendimentos : "recebe"
