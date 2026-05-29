@@ -31,28 +31,28 @@ with col1:
             data_hora = st.date_input("Data da Consulta")
             hora = st.time_input("Horário")
             motivo = st.text_area("Motivo da consulta / Sintomas")
-        
-        submit = st.form_submit_button("Agendar", type="primary", width="stretch")
-        if submit:
-            erros = []
-            if not pet_selecionado:
-                erros.append("Selecione um pet válido.")
-            if not motivo:
-                erros.append("O motivo da consulta é obrigatório.")
-                
-            if not erros:
-                create_consulta({
-                    "data": f"{data_hora} {hora}",
-                    "pet_id": pet_selecionado,
-                    "pet": pets_options[pet_selecionado],
-                    "status": "Agendada",
-                    "motivo": motivo
-                })
-                st.success("Consulta agendada com sucesso!")
-                st.rerun()
-            else:
-                for erro in erros:
-                    st.error(erro)
+            
+            submit = st.form_submit_button("Agendar", type="primary", width="stretch")
+            if submit:
+                erros = []
+                if not pet_selecionado:
+                    erros.append("Selecione um pet válido.")
+                if not motivo:
+                    erros.append("O motivo da consulta é obrigatório.")
+                    
+                if not erros:
+                    create_consulta({
+                        "data": f"{data_hora} {hora}",
+                        "pet_id": pet_selecionado,
+                        "pet": pets_options[pet_selecionado],
+                        "status": "Agendada",
+                        "motivo": motivo
+                    })
+                    st.success("Consulta agendada com sucesso!")
+                    st.rerun()
+                else:
+                    for erro in erros:
+                        st.error(erro)
 
 with col2:
     st.subheader("Histórico e Próximas Consultas")
