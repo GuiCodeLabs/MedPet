@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from typing import List
 
 from app.database import get_db
-from app.schemas.cliente_schema import ClienteCreate, ClienteResponse
+from app.schemas.cliente_schema import ClienteCreate, ClienteResponse, ClienteUpdate
 from app.services.cliente_service import ClienteService
 
 router = APIRouter(
@@ -31,3 +31,20 @@ def obter_cliente(id: int, db: Session = Depends(get_db)):
     if not cliente:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Cliente não encontrado.")
     return cliente
+
+def atualizar_cliente(id: int, cliente_in: ClienteUpdate, db: Session = Depends(get_db)):
+    service = ClienteService(db)
+    try:
+        return service.update(id, cliente_in)
+    
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
+    
+def deletar_cliente(id: int, db: Session = Depends(get_db)):
+    service = ClienteService(db)
+    try:
+        service.delete(id)
+        return {"detail": "Cliente deletado com sucesso."}
+    
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
