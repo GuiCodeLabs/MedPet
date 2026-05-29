@@ -28,3 +28,13 @@ def listar_pets(db: Session = Depends(get_db)):
 def listar_pets_por_tutor(cliente_id: int, db: Session = Depends(get_db)):
     service = PetService(db)
     return service.list_by_owner(cliente_id)
+
+@router.get("/{id}", response_model=PetResponse)
+def obter_pet(id: int, db: Session = Depends(get_db)):
+    service = PetService(db)
+    pet = service.get_by_id(id)
+
+    if not pet:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Pet não encontrado.")
+    
+    return pet
