@@ -1,0 +1,31 @@
+sequenceDiagram
+    autonumber
+    actor VetAdmin as 👤 Veterinário / Administrador
+    participant Streamlit as 💻 Streamlit (Frontend)
+    participant FastAPI as 🚀 FastAPI (Route /atendimentos/)
+    participant Service as ⚙️ AtendimentoService
+    participant PetRepo as 🗄️ PetRepository
+    participant AtendRepo as 🗄️ AtendimentoRepository
+    participant DB as 💾 Banco de Dados (SQLite)
+
+    VetAdmin->>Streamlit: Insere dados (motivo, descrição, pet_id) e clica em Salvar
+    Streamlit->>FastAPI: POST /atendimentos/ { motivo, descricao, pet_id }
+    FastAPI->>Service: create(atendimento_in)
+    Service->>PetRepo: get_by_id(pet_id)
+    PetRepo->>DB: SELECT * FROM pets WHERE id = pet_id
+    DB-->>PetRepo: Retorna dados do Pet (ou None)
+    PetRepo-->>Service: Retorna objeto Pet (ou None)
+
+    alt Pet não cadastrado no banco de dados
+        Service-->>FastAPI: Lança ValueError("Pet não encontrado")
+        FastAPI-->>Streamlit: HTTP 400 Bad Request { "detail": "Pet não encontrado." }
+        Streamlit-->>VetAdmin: Exibe aviso de erro na tela
+    else Pet cadastrado com sucesso
+        Service->>AtendRepo: create(novo_atendimento_model)
+        AtendRepo->>DB: INSERT INTO atendimentos (motivo, descricao, pet_id)
+        DB-->>AtendRepo: Retorna objeto salvo com id e data gerados
+        AtendRepo-->>Service: Retorna objeto Atendimento
+        Service-->>FastAPI: Retorna objeto Atendimento
+        FastAPI-->>Streamlit: HTTP 201 Created com AtendimentoResponse
+        Streamlit-->>VetAdmin: Exibe toast "Atendimento registrado com sucesso!"
+    end
