@@ -1,154 +1,73 @@
-# 🎤 Roteiro da Apresentação — MedPet
+# 🎤 Roteiro de Apresentação — MedPet
 
-## 1. Introdução
-
-Olá, professor e colegas.
-
-Nós somos o grupo responsável pelo desenvolvimento do **MedPet**, um sistema web voltado para a gestão básica de uma clínica veterinária.
-
-O projeto foi desenvolvido para a disciplina de **Análise e Projeto de Sistemas**, com o objetivo de aplicar conceitos de Engenharia de Software, levantamento de requisitos, casos de uso, arquitetura de software e desenvolvimento de uma aplicação web completa.
+Este documento serve como um guia de apoio para a equipe durante a apresentação oficial do sistema **MedPet** para a disciplina de Análise e Projeto de Sistemas. Ele está organizado com marcações de tempo sugeridas e dicas práticas para a demonstração ao vivo.
 
 ---
 
-## 2. Apresentação da Equipe
+## 1. Introdução e Abertura (⏱️ 1 a 2 min)
 
-A equipe é formada por:
-
-- Guilherme
-- Arllan
-- Pedro H.
-- Pedro Antonio
-
-A divisão do trabalho foi pensada para que todos pudessem participar ativamente tanto do planejamento e documentação quanto da implementação do Backend e Frontend.
+* **Objetivo**: Cumprimentar a banca, introduzir a equipe e expor o propósito geral do projeto.
+* **Tópicos de Fala**:
+  - Apresentar a equipe (Guilherme, Arllan, Pedro H., Pedro Antonio).
+  - Explicar que o MedPet é uma aplicação web para gerenciamento básico de clínicas veterinárias criada para aplicar na prática conceitos de Engenharia de Software, modelagem UML e arquitetura de sistemas.
 
 ---
 
-## 3. Tema do Projeto
+## 2. O Problema e a Proposta de Valor (⏱️ 2 min)
 
-O tema escolhido pelo grupo foi o gerenciamento de uma **clínica veterinária**.
-
-O sistema recebeu o nome de **MedPet** e tem como proposta auxiliar no controle de informações essenciais da clínica, substituindo processos manuais e planilhas por uma plataforma digital centralizada.
-
----
-
-## 4. Problema Identificado
-
-Muitas clínicas veterinárias de pequeno porte ainda registram suas informações de forma manual, o que gera diversos problemas, como:
-
-- Dificuldade para encontrar o histórico clínico dos animais;
-- Perda de dados importantes;
-- Desorganização no agendamento e controle de atendimentos;
-- Possibilidade de registros duplicados de clientes e pets.
-
-Diante disso, o MedPet surge como uma solução web simples e direta para resolver esses gargalos.
+* **Objetivo**: Demonstrar o cenário e os problemas que o MedPet visa sanar.
+* **Tópicos de Fala**:
+  - Dificuldade enfrentada por clínicas de pequeno porte com fichas e prontuários manuais de papel ou planilhas desconexas.
+  - Perda de histórico clínico de pets e registros redundantes de clientes tutor/CPF.
+  - **A Proposta**: Um sistema rápido, leve e centralizado integrando cadastros, históricos de atendimentos médicos e controle de acesso seguro por operador.
 
 ---
 
-## 5. Objetivo do Sistema
+## 3. Escopo e Limitações (⏱️ 1 min)
 
-O objetivo principal do MedPet é facilitar a gestão do dia a dia da clínica veterinária.
-
-Com o sistema, é possível:
-
-- Gerenciar os perfis de usuários do sistema;
-- Cadastrar e consultar clientes (tutores);
-- Cadastrar os pets, vinculando-os aos seus tutores;
-- Registrar e consultar o histórico de atendimentos veterinários.
+* **Objetivo**: Deixar claro o que faz parte do MVP da apresentação e o que foi deixado de fora do escopo.
+* **Tópicos de Fala**:
+  - **Incluso**: Sistema de autenticação JWT, CRUD de clientes e pets, e registro de atendimentos clínicos.
+  - **Fora do escopo**: Módulos financeiros, integração de mensagens automatizadas com WhatsApp ou controle de estoque de farmácia.
 
 ---
 
-## 6. Público-Alvo
+## 4. Engenharia de Software e Modelagem (⏱️ 2 min)
 
-O sistema foi desenhado para atender clínicas de pequeno e médio porte.
-
-Os principais usuários incluem:
-
-- **Administradores:** Que possuem controle total sobre o sistema;
-- **Atendentes/Recepção:** Que realizam o cadastro de clientes e pets;
-- **Veterinários:** Que consultam as informações clínicas e registram os atendimentos.
+* **Objetivo**: Apresentar os artefatos de análise e modelagem UML criados na fase de projeto.
+* **Tópicos de Fala**:
+  - **Casos de Uso**: Como dividimos as interações dos atores (Admin, Funcionário, Vet) com o sistema.
+  - **Modelo de Dados (ERD)**: A estruturação física do banco SQLite, evidenciando as relações de tabelas (`clientes` -> `pets` -> `atendimentos`) e a regra de exclusão em cascata.
+  - **Arquitetura (Componentes)**: Separação física clara entre frontend Streamlit e backend FastAPI.
 
 ---
 
-## 7. Escopo do Sistema
+## 5. Demonstração Prática do Sistema (⏱️ 4 min)
 
-Focamos em entregar um MVP (Minimum Viable Product) funcional e condizente com os prazos acadêmicos da disciplina.
+* **Objetivo**: Demonstrar o sistema real funcionando ao vivo.
 
-### O sistema inclui:
-- Cadastro e Autenticação de usuários (Login com JWT);
-- Operações de CRUD (Criar, Ler, Atualizar e Excluir) para Clientes e Pets;
-- Registro de Atendimentos;
-- Interface visual intuitiva.
-
-### O sistema NÃO inclui neste momento:
-- Aplicativo mobile para tutores;
-- Módulo financeiro e emissão de notas fiscais;
-- Integração com WhatsApp ou envio de notificações automáticas.
+> [!TIP]
+> **Roteiro Recomendado para a Demo:**
+> 1. **Login**: Realizar login com uma conta com perfil de Atendente e tentar excluir um pet para mostrar que o sistema bloqueia (Regra de Acesso).
+> 2. **Cadastro**: Logar como Administrador, cadastrar um novo tutor (Cliente) e em seguida cadastrar um Pet associado a ele.
+> 3. **Atendimento**: Logar com um perfil de Veterinário, selecionar o pet cadastrado e lançar uma nova consulta clínica/vacinação.
+> 4. **Histórico**: Acessar o histórico clínico do pet para verificar se a consulta aparece em tempo real.
+> 5. **Swagger**: Mostrar rapidamente a documentação interativa gerada automaticamente pelo FastAPI em `/docs` para evidenciar a robustez do backend.
 
 ---
 
-## 8. Arquitetura e Padrões de Projeto
+## 6. Qualidade de Código e CI/CD (⏱️ 1 min)
 
-Para garantir um código limpo e manutenível, adotamos uma arquitetura dividida em três camadas principais:
-
-- **Frontend:** Interface de comunicação com o usuário.
-- **Backend:** API RESTful que processa as regras de negócio.
-- **Banco de Dados:** Camada de persistência.
-
-No backend, aplicamos uma variação do padrão MVC voltada para APIs, utilizando os padrões **Repository** (para isolar o banco de dados) e **Service Layer** (para separar as regras de negócio das rotas HTTP).
+* **Objetivo**: Evidenciar os padrões técnicos adotados para garantir a sustentabilidade do código.
+* **Tópicos de Fala**:
+  - **Testes Automatizados**: Uso do Pytest com banco de dados isolado em memória (`sqlite:///:memory:`).
+  - **Pipeline de CI**: Integração contínua rodando Black (linter de formatação) e Pytest em cada Push ou Pull Request via GitHub Actions.
 
 ---
 
-## 9. Tecnologias Utilizadas
+## 7. Conclusão e Encerramento (⏱️ 1 min)
 
-Escolhemos uma stack moderna e unificada em Python:
-
-- **Python** como linguagem principal.
-- **FastAPI** para a construção rápida e robusta da API REST no backend.
-- **Streamlit** para o frontend, permitindo criar interfaces web ricas de forma ágil.
-- **SQLite** como banco de dados relacional (ideal pela simplicidade acadêmica).
-- **SQLAlchemy** como nosso ORM (Object-Relational Mapping).
-- **Pydantic** para validação estrita de dados na API.
-- **Pytest** para garantir a qualidade do sistema por meio de testes automatizados.
-- **Git/GitHub** para versionamento de código e colaboração.
-
----
-
-## 10. Estrutura das Entidades
-
-O banco de dados e a arquitetura do projeto foram modelados em torno de quatro entidades principais e padronizadas:
-
-1. **Usuario:** Representa quem acessa e opera o sistema.
-2. **Cliente:** Representa o tutor financeiro e responsável.
-3. **Pet:** O animal de estimação obrigatoriamente vinculado ao cliente.
-4. **Atendimento:** O registro clínico vinculado ao pet.
-
-Essa nomenclatura (usuario, cliente, pet, atendimento) foi utilizada rigorosamente em todo o código, desde os modelos de banco de dados até os endpoints da API.
-
----
-
-## 11. Divisão da Equipe
-
-A responsabilidade pelo desenvolvimento e documentação foi dividida da seguinte forma:
-
-- **Guilherme:** Desenvolvimento do backend base, estruturação do banco de dados e fluxos de autenticação.
-- **Arllan:** Criação dos módulos e rotas de Clientes e Pets, além da elaboração dos diagramas UML.
-- **Pedro H.:** Estruturação do frontend no Streamlit e integração total da interface com a API.
-- **Pedro Antonio:** Desenvolvimento dos módulos de atendimentos/prontuários, criação dos testes automatizados e refinamento da documentação.
-
----
-
-## 12. Resultados e Conclusão
-
-Ao longo da disciplina, conseguimos evoluir desde o levantamento dos requisitos até a implementação de um sistema web modular e funcional. 
-
-O MedPet atende a um problema real de forma prática, demonstrando a integração bem-sucedida entre uma interface visual desenvolvida em Streamlit e uma API rápida e segura feita em FastAPI. 
-
-Acreditamos que o projeto apresenta uma arquitetura sólida, pronta para receber novas funcionalidades no futuro — como controle de vacinas e módulos financeiros — validando todos os conhecimentos práticos e teóricos adquiridos em Análise e Projeto de Sistemas.
-
----
-
-## 13. Encerramento
-
-Esse foi o nosso projeto **MedPet**.
-
-Agradecemos a atenção de todos e estamos à disposição para eventuais dúvidas!
+* **Objetivo**: Finalizar a apresentação, destacar aprendizados e abrir espaço para perguntas da banca.
+* **Tópicos de Fala**:
+  - Aprendizado prático de desenvolvimento em camadas (MVC Adaptado + Repository + Services).
+  - Agradecimento ao professor e colegas e abertura para perguntas.

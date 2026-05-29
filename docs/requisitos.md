@@ -2,165 +2,75 @@
 
 ## 1. Visão Geral
 
-O **MedPet** é um sistema web voltado para a gestão básica de uma clínica veterinária.
+O **MedPet** é um sistema web voltado para a gestão básica de uma clínica veterinária. O objetivo do sistema é permitir o cadastro, consulta, atualização e exclusão de informações relacionadas a usuários, clientes, pets e atendimentos veterinários.
 
-O objetivo do sistema é permitir o cadastro, consulta, atualização e exclusão de informações relacionadas a usuários, clientes, pets e atendimentos veterinários.
-
-Este documento apresenta os requisitos funcionais e não funcionais do sistema, servindo como base para o desenvolvimento, modelagem UML e apresentação do projeto.
+Este documento apresenta os **Requisitos Funcionais (RFs)**, **Requisitos Não Funcionas (RNFs)** e as **Regras de Negócio (RNs)** do sistema, servindo como a base de qualidade para o desenvolvimento do backend, da interface Streamlit e da suíte de testes do projeto.
 
 ---
 
-## 2. Objetivo dos Requisitos
+## 2. Requisitos Funcionais
 
-Os requisitos têm como finalidade definir o que o sistema deve fazer e quais características de qualidade ele deve possuir.
+Os requisitos funcionais representam as funcionalidades diretas que o sistema deve oferecer aos usuários operadores (atendentes, veterinários e administradores).
 
-A partir deles, será possível orientar:
-
-- O desenvolvimento do backend
-- A criação da interface web
-- A modelagem dos casos de uso
-- A estruturação do banco de dados
-- A criação dos testes do sistema
-
----
-
-## 3. Requisitos Funcionais
-
-Os requisitos funcionais representam as funcionalidades que o sistema deve oferecer aos usuários.
-
-| Código | Requisito | Descrição |
-|---|---|---|
-| RF01 | Cadastrar usuário | O sistema deve permitir o cadastro de usuários que terão acesso à aplicação. |
-| RF02 | Autenticar usuário | O sistema deve permitir que o usuário realize login com suas credenciais. |
-| RF03 | Cadastrar cliente | O sistema deve permitir o cadastro dos tutores dos pets. |
-| RF04 | Consultar clientes | O sistema deve permitir a listagem e consulta dos clientes cadastrados. |
-| RF05 | Atualizar cliente | O sistema deve permitir a edição dos dados de um cliente cadastrado. |
-| RF06 | Excluir cliente | O sistema deve permitir a remoção de clientes do sistema. |
-| RF07 | Cadastrar pet | O sistema deve permitir o cadastro dos pets vinculados aos clientes. |
-| RF08 | Consultar pets | O sistema deve permitir a visualização dos pets cadastrados. |
-| RF09 | Atualizar pet | O sistema deve permitir a alteração dos dados de um pet. |
-| RF10 | Excluir pet | O sistema deve permitir a exclusão de pets cadastrados. |
-| RF11 | Registrar atendimento | O sistema deve permitir o registro de atendimentos veterinários. |
-| RF12 | Consultar atendimentos | O sistema deve permitir a consulta dos atendimentos registrados. |
+| Código | Requisito | Descrição | Nível de Acesso |
+| :---: | :--- | :--- | :--- |
+| **RF01** | Cadastrar usuário | Permitir o cadastro de novos operadores do sistema com e-mail, nome, senha e perfil. | Administrador |
+| **RF02** | Autenticar usuário | Permitir login via e-mail e senha com geração de Token JWT. | Todos os perfis |
+| **RF03** | Cadastrar cliente | Registrar tutores de animais com CPF, e-mail, nome, telefone e endereço. | Administrador, Funcionário |
+| **RF04** | Consultar clientes | Listar e pesquisar clientes/tutores cadastrados. | Todos os perfis |
+| **RF05** | Atualizar cliente | Alterar dados cadastrais de um cliente existente. | Administrador, Funcionário |
+| **RF06** | Excluir cliente | Remover permanentemente um cliente e seus pets associados. | Administrador |
+| **RF07** | Cadastrar pet | Cadastrar um animal vinculando-o obrigatoriamente a um tutor (cliente). | Administrador, Funcionário |
+| **RF08** | Consultar pets | Listar e pesquisar pets, visualizando sua espécie, raça, idade e peso. | Todos os perfis |
+| **RF09** | Atualizar pet | Alterar dados cadastrais de um pet existente. | Todos os perfis |
+| **RF10** | Excluir pet | Remover permanentemente um pet e seu histórico de consultas. | Administrador |
+| **RF11** | Registrar atendimento | Registrar detalhes de uma consulta ou procedimento médico de um pet. | Administrador, Veterinário |
+| **RF12** | Consultar atendimentos| Visualizar o histórico completo de atendimentos gerais ou filtrado por pet. | Todos os perfis |
 
 ---
 
-## 4. Requisitos Não Funcionais
+## 3. Requisitos Não Funcionais
 
-Os requisitos não funcionais representam características de qualidade, segurança, desempenho e organização do sistema.
+Os requisitos não funcionais especificam critérios que podem ser usados para julgar a operação de um sistema, em vez de comportamentos específicos.
 
-| Código | Requisito | Descrição |
-|---|---|---|
-| RNF01 | Segurança | O sistema deve possuir controle de acesso por autenticação. |
-| RNF02 | Usabilidade | A interface deve ser simples, intuitiva e fácil de utilizar. |
-| RNF03 | Performance | O sistema deve responder às principais operações em tempo aceitável. |
-| RNF04 | Organização | O código deve seguir uma estrutura modular e organizada. |
-| RNF05 | Manutenibilidade | O sistema deve permitir futuras alterações e melhorias com facilidade. |
-| RNF06 | Persistência | Os dados devem ser armazenados em banco de dados relacional. |
-| RNF07 | Documentação | O sistema deve possuir documentação básica das funcionalidades e estrutura. |
-| RNF08 | Testabilidade | O sistema deve permitir a criação de testes para validar suas funcionalidades. |
-
----
-
-## 5. Regras de Negócio
-
-| Código | Regra | Descrição |
-|---|---|---|
-| RN01 | Cliente obrigatório para pet | Todo pet cadastrado deve estar vinculado a um cliente. |
-| RN02 | Login obrigatório | Apenas usuários autenticados devem acessar as funcionalidades principais. |
-| RN03 | Dados obrigatórios | Cadastros devem conter os campos mínimos necessários. |
-| RN04 | Atendimento vinculado a pet | Todo atendimento deve estar associado a um pet cadastrado. |
-| RN05 | Não duplicidade | O sistema deve evitar cadastros duplicados quando possível. |
+| Código | Categoria | Descrição |
+| :---: | :--- | :--- |
+| **RNF01** | Segurança | Acesso autenticado via protocolo **OAuth2** com tokens **JWT** (JSON Web Tokens). |
+| **RNF02** | Usabilidade | Interface construída com **Streamlit**, focando em simplicidade e fluxo intuitivo para o atendente/vet. |
+| **RNF03** | Desempenho | Tempo de resposta rápido para listagens locais, utilizando paginação ou queries otimizadas. |
+| **RNF04** | Persistência | Armazenamento relacional utilizando o banco de dados **SQLite** para facilidade de implantação local. |
+| **RNF05** | Manutenibilidade | Arquitetura modular separada em camadas lógicas (Routes, Services, Repositories). |
+| **RNF06** | Testabilidade | Alta cobertura de testes unitários e de integração utilizando o ecossistema **Pytest**. |
+| **RNF07** | Portabilidade | Disponibilidade do ambiente de produção/desenvolvimento via **Docker Compose**. |
 
 ---
 
-## 6. Entidades Principais
+## 4. Regras de Negócio (RN)
 
-As principais entidades previstas para o sistema são:
+As regras de negócio definem as restrições de comportamento e fluxos permitidos dentro do sistema.
 
-### Usuário
+> [!IMPORTANT]
+> **RN01 — Vínculo Obrigatório de Pets**
+> Todo pet registrado na base de dados deve estar obrigatoriamente associado a um tutor (cliente) válido existente no banco de dados.
 
-Representa quem acessa o sistema.
+> [!IMPORTANT]
+> **RN02 — Vínculo Obrigatório de Atendimento**
+> Qualquer registro de atendimento médico ou consulta deve estar estritamente associado a um pet cadastrado. Não é permitido criar atendimentos "órfãos".
 
-Campos sugeridos:
+> [!CAUTION]
+> **RN03 — Controle de Acesso e Login**
+> Todas as rotas de negócio (Clientes, Pets e Atendimentos) exigem autenticação do operador. Adicionalmente, apenas usuários com perfil de **Administrador** têm permissão para deletar registros (Clientes, Pets, Atendimentos ou Usuários).
 
-- ID
-- Nome
-- E-mail
-- Senha
-- Tipo de usuário
-
-### Cliente
-
-Representa o tutor responsável pelo pet.
-
-Campos sugeridos:
-
-- ID
-- Nome
-- CPF
-- Telefone
-- Endereço
-
-### Pet
-
-Representa o animal cadastrado na clínica.
-
-Campos sugeridos:
-
-- ID
-- Nome
-- Espécie
-- Raça
-- Idade
-- ID do cliente
-
-### Atendimento
-
-Representa o registro de uma consulta ou procedimento.
-
-Campos sugeridos:
-
-- ID
-- Data
-- Descrição
-- Diagnóstico
-- Observações
-- ID do pet
+> [!WARNING]
+> **RN04 — Não Duplicidade de Chaves**
+> O sistema não deve permitir o cadastro de clientes com o mesmo CPF ou E-mail. Do mesmo modo, cada operador (usuário) deve possuir um e-mail único para login.
 
 ---
 
-## 7. Prioridade dos Requisitos
+## 5. Rastreabilidade no Código
 
-### Alta Prioridade
-
-- Cadastro de usuários
-- Login
-- Cadastro de clientes
-- Cadastro de pets
-- Registro de atendimentos
-- Consulta de dados
-
-### Média Prioridade
-
-- Atualização de registros
-- Exclusão de registros
-- Organização dos dados em tabelas
-- Validação de campos
-
-### Baixa Prioridade
-
-- Relatórios simples
-- Melhorias visuais
-- Filtros avançados
-- Controle de permissões mais detalhado
-
----
-
-## 8. Considerações Finais
-
-Este documento define os requisitos iniciais do sistema **MedPet**.
-
-Ele será utilizado como base para o desenvolvimento do projeto, criação dos casos de uso, modelagem UML e apresentação final da disciplina de Análise e Projeto de Sistemas.
-
-O sistema foi pensado para atender ao escopo inicial do projeto, mantendo uma estrutura simples, funcional e organizada.
+Para guiar o desenvolvimento, os requisitos são mapeados diretamente na estrutura do backend:
+- **RF01 - RF02**: Implementados em `app/routes/auth_routes.py`, `app/services/auth_service.py` e `app/core/security.py`.
+- **RF03 - RF06**: Mapeados em `app/routes/cliente_routes.py` e validados pelo `app/services/cliente_service.py`.
+- **RF07 - RF10**: Mapeados em `app/routes/pet_routes.py` e persistidos via `app/repositories/pet_repository.py`.
+- **RF11 - RF12**: Mapeados em `app/routes/atendimento_routes.py`, aplicando a regra `RN02` no service correspondente.

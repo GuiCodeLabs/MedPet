@@ -2,493 +2,196 @@
 
 ## 1. Visão Geral
 
-Este documento apresenta os principais casos de uso do sistema **MedPet**, uma aplicação web voltada para a gestão básica de uma clínica veterinária.
+Este documento detalha os **Casos de Uso (UCs)** do sistema **MedPet**, especificando os fluxos lógicos e interações entre os atores operacionais e a aplicação clínica. 
 
-Os casos de uso descrevem as interações entre os usuários e o sistema, mostrando quais funcionalidades estarão disponíveis e como elas serão utilizadas.
+Os casos de uso servem como contrato de desenvolvimento para a interface do frontend (Streamlit) e são validados de forma automatizada pelos testes de integração da API.
 
 ---
 
 ## 2. Atores do Sistema
 
-### Administrador
+O sistema conta com três perfis de usuários com diferentes privilégios de acesso:
 
-Usuário com acesso completo ao sistema.
-
-Responsabilidades:
-
-- Gerenciar usuários
-- Cadastrar clientes
-- Cadastrar pets
-- Registrar atendimentos
-- Consultar informações
-- Atualizar e excluir registros
-
-### Funcionário
-
-Usuário responsável pelas operações básicas do dia a dia da clínica.
-
-Responsabilidades:
-
-- Cadastrar clientes
-- Cadastrar pets
-- Consultar registros
-- Registrar atendimentos
-
-### Veterinário
-
-Usuário responsável por consultar informações dos pets e registrar atendimentos.
-
-Responsabilidades:
-
-- Consultar dados de clientes e pets
-- Registrar atendimentos veterinários
-- Atualizar informações relacionadas ao atendimento
+* **Administrador (Admin)**: Acesso irrestrito a todas as operações, incluindo criação de operadores do sistema e exclusões de registros históricos de clientes, pets ou consultas.
+* **Funcionário (Atendente)**: Focado em atividades administrativas da recepção, como cadastro de clientes e pets, e consulta de históricos.
+* **Veterinário (Vet)**: Focado na parte clínica, com autorização para consultar dados de prontuários e registrar novos atendimentos clínicos.
 
 ---
 
-## 3. Lista de Casos de Uso
+## 3. Matriz de Casos de Uso
 
-| Código | Caso de Uso | Ator Principal | Descrição |
-|---|---|---|---|
-| UC01 | Realizar login | Administrador, Funcionário, Veterinário | Permite que o usuário acesse o sistema com suas credenciais. |
-| UC02 | Cadastrar usuário | Administrador | Permite cadastrar novos usuários no sistema. |
-| UC03 | Cadastrar cliente | Administrador, Funcionário | Permite registrar os dados dos tutores dos pets. |
-| UC04 | Consultar cliente | Administrador, Funcionário, Veterinário | Permite consultar clientes cadastrados. |
-| UC05 | Atualizar cliente | Administrador, Funcionário | Permite editar os dados de um cliente. |
-| UC06 | Excluir cliente | Administrador | Permite remover um cliente do sistema. |
-| UC07 | Cadastrar pet | Administrador, Funcionário | Permite registrar os dados dos animais. |
-| UC08 | Consultar pet | Administrador, Funcionário, Veterinário | Permite consultar informações dos pets cadastrados. |
-| UC09 | Atualizar pet | Administrador, Funcionário, Veterinário | Permite editar dados dos pets. |
-| UC10 | Excluir pet | Administrador | Permite remover um pet do sistema. |
-| UC11 | Registrar atendimento | Administrador, Veterinário | Permite registrar consultas ou procedimentos realizados. |
-| UC12 | Consultar atendimento | Administrador, Funcionário, Veterinário | Permite visualizar atendimentos registrados. |
+| Código | Caso de Uso | Atores Principais | Permissão Mínima | Link de Detalhe |
+| :---: | :--- | :--- | :---: | :--- |
+| **UC01** | Realizar login | Administrador, Funcionário, Veterinário | Qualquer perfil | [Detalhar UC01](#uc01--realizar-login) |
+| **UC02** | Cadastrar usuário | Administrador | Administrador | [Detalhar UC02](#uc02--cadastrar-usuario) |
+| **UC03** | Cadastrar cliente | Administrador, Funcionário | Funcionário | [Detalhar UC03](#uc03--cadastrar-cliente) |
+| **UC04** | Consultar cliente | Administrador, Funcionário, Veterinário | Qualquer perfil | [Detalhar UC04](#uc04--consultar-cliente) |
+| **UC05** | Atualizar cliente | Administrador, Funcionário | Funcionário | [Detalhar UC05](#uc05--atualizar-cliente) |
+| **UC06** | Excluir cliente | Administrador | Administrador | [Detalhar UC06](#uc06--excluir-cliente) |
+| **UC07** | Cadastrar pet | Administrador, Funcionário | Funcionário | [Detalhar UC07](#uc07--cadastrar-pet) |
+| **UC08** | Consultar pet | Administrador, Funcionário, Veterinário | Qualquer perfil | [Detalhar UC08](#uc08--consultar-pet) |
+| **UC09** | Atualizar pet | Administrador, Funcionário, Veterinário | Qualquer perfil | [Detalhar UC09](#uc09--atualizar-pet) |
+| **UC10** | Excluir pet | Administrador | Administrador | [Detalhar UC10](#uc10--excluir-pet) |
+| **UC11** | Registrar atendimento | Administrador, Veterinário | Veterinário | [Detalhar UC11](#uc11--registrar-atendimento) |
+| **UC12** | Consultar atendimento | Administrador, Funcionário, Veterinário | Qualquer perfil | [Detalhar UC12](#uc12--consultar-atendimento) |
 
 ---
 
 ## 4. Detalhamento dos Casos de Uso
 
-## UC01 — Realizar Login
+### UC01 — Realizar Login
 
-### Ator Principal
+* **Atores**: Administrador, Funcionário ou Veterinário.
+* **Objetivo**: Permitir que o operador se autentique no sistema.
+* **Pré-condições**: Conta de usuário ativa no banco de dados.
+* **Entradas**: E-mail e senha.
+* **Saídas**: Token de acesso JWT (guardado no Session State) e liberação de acesso.
 
-Administrador, Funcionário ou Veterinário.
+| Passo | Ação do Ator | Resposta do Sistema |
+| :---: | :--- | :--- |
+| **1** | Insere e-mail e senha na tela de login. | Valida se os campos foram preenchidos. |
+| **2** | Clica no botão "Entrar". | Envia os dados para a rota `/auth/login` e verifica o hash da senha via bcrypt. |
+| **3** | | Gera o Token JWT e redireciona o usuário à página inicial. |
 
-### Objetivo
-
-Permitir que o usuário acesse o sistema de forma segura.
-
-### Pré-condições
-
-- O usuário deve estar cadastrado no sistema.
-- O usuário deve possuir e-mail e senha válidos.
-
-### Fluxo Principal
-
-1. O usuário acessa a tela de login.
-2. O usuário informa e-mail e senha.
-3. O sistema valida as credenciais.
-4. O sistema libera o acesso às funcionalidades.
-5. O usuário é direcionado para a tela principal.
-
-### Fluxo Alternativo
-
-- Caso os dados estejam incorretos, o sistema exibe uma mensagem de erro.
-
-### Pós-condição
-
-O usuário autenticado passa a ter acesso ao sistema.
+> [!WARNING]
+> **Fluxo de Exceção (Credenciais Inválidas):** Caso o e-mail não seja encontrado ou a senha esteja incorreta, o sistema retorna `HTTP 401 Unauthorized` e o frontend exibe o aviso "E-mail ou senha incorretos".
 
 ---
 
-## UC02 — Cadastrar Usuário
+### UC02 — Cadastrar Usuário
 
-### Ator Principal
+* **Atores**: Administrador.
+* **Objetivo**: Adicionar um novo operador com privilégios específicos ao sistema.
+* **Pré-condições**: Administrador autenticado no sistema.
+* **Entradas**: Nome, e-mail, senha de acesso inicial, perfil (Administrador, Funcionário ou Veterinário).
+* **Saídas**: Confirmação de cadastro do usuário.
 
-Administrador.
+> [!CAUTION]
+> **Privilégio Exclusivo:** Apenas administradores conseguem criar outras contas de operadores no sistema.
 
-### Objetivo
-
-Permitir que o administrador cadastre novos usuários no sistema.
-
-### Pré-condições
-
-- O administrador deve estar autenticado.
-
-### Fluxo Principal
-
-1. O administrador acessa a área de usuários.
-2. O administrador seleciona a opção de novo cadastro.
-3. O sistema exibe o formulário de cadastro.
-4. O administrador informa os dados do usuário.
-5. O sistema valida as informações.
-6. O sistema salva o novo usuário.
-
-### Fluxo Alternativo
-
-- Caso algum campo obrigatório esteja vazio, o sistema solicita correção.
-- Caso o e-mail já esteja cadastrado, o sistema informa duplicidade.
-
-### Pós-condição
-
-O novo usuário fica disponível para acesso ao sistema.
+| Passo | Ação do Ator | Resposta do Sistema |
+| :---: | :--- | :--- |
+| **1** | Acessa a aba "Gerenciar Usuários" e preenche o formulário. | Exibe formulário contendo campo de Perfil como caixa de seleção (Selectbox). |
+| **2** | Clica em "Salvar Usuário". | Envia `POST /usuarios/`, valida campos, criptografa a senha e salva na base de dados. |
 
 ---
 
-## UC03 — Cadastrar Cliente
+### UC03 — Cadastrar Cliente
 
-### Ator Principal
+* **Atores**: Administrador ou Funcionário.
+* **Objetivo**: Cadastrar o tutor responsável pelos animais atendidos na clínica.
+* **Pré-condições**: Operador autenticado.
+* **Entradas**: Nome completo, CPF, E-mail, Telefone e Endereço.
+* **Saídas**: Cliente salvo com ID gerado automaticamente.
 
-Administrador ou Funcionário.
+| Passo | Ação do Ator | Resposta do Sistema |
+| :---: | :--- | :--- |
+| **1** | Acessa a aba "Clientes" e escolhe "Novo Cadastro". | Exibe formulário limpo. |
+| **2** | Preenche os dados e clica em "Salvar". | Valida formato do CPF e e-mail. Salva o registro e retorna `HTTP 201 Created`. |
 
-### Objetivo
-
-Registrar os dados do tutor responsável pelo pet.
-
-### Pré-condições
-
-- O usuário deve estar autenticado.
-
-### Fluxo Principal
-
-1. O usuário acessa a área de clientes.
-2. O usuário seleciona a opção de cadastrar cliente.
-3. O sistema apresenta o formulário.
-4. O usuário informa os dados do cliente.
-5. O sistema valida os campos obrigatórios.
-6. O sistema salva o cliente no banco de dados.
-
-### Fluxo Alternativo
-
-- Caso existam dados obrigatórios em branco, o sistema exibe uma mensagem de erro.
-
-### Pós-condição
-
-O cliente fica cadastrado no sistema.
+> [!NOTE]
+> **Fluxo de Exceção (CPF Duplicado):** Se o CPF digitado já estiver cadastrado na tabela de clientes, o sistema retorna `HTTP 400 Bad Request` e a interface avisa que o cliente já existe.
 
 ---
 
-## UC04 — Consultar Cliente
+### UC04 — Consultar Cliente
 
-### Ator Principal
-
-Administrador, Funcionário ou Veterinário.
-
-### Objetivo
-
-Permitir a busca e visualização dos clientes cadastrados.
-
-### Pré-condições
-
-- O usuário deve estar autenticado.
-- Deve existir ao menos um cliente cadastrado.
-
-### Fluxo Principal
-
-1. O usuário acessa a área de clientes.
-2. O sistema lista os clientes cadastrados.
-3. O usuário pode visualizar os dados disponíveis.
-4. O usuário pode utilizar filtros ou busca, caso disponível.
-
-### Fluxo Alternativo
-
-- Caso não existam clientes cadastrados, o sistema informa que nenhum registro foi encontrado.
-
-### Pós-condição
-
-Os dados do cliente são exibidos ao usuário.
+* **Atores**: Administrador, Funcionário ou Veterinário.
+* **Objetivo**: Listar clientes e encontrar dados cadastrais de contato.
+* **Pré-condições**: Operador autenticado.
+* **Entradas**: Termo de busca (Nome ou CPF do cliente).
+* **Saídas**: Lista de registros correspondentes.
 
 ---
 
-## UC05 — Atualizar Cliente
+### UC05 — Atualizar Cliente
 
-### Ator Principal
-
-Administrador ou Funcionário.
-
-### Objetivo
-
-Permitir a edição dos dados de um cliente cadastrado.
-
-### Pré-condições
-
-- O usuário deve estar autenticado.
-- O cliente deve existir no sistema.
-
-### Fluxo Principal
-
-1. O usuário acessa a lista de clientes.
-2. O usuário seleciona o cliente desejado.
-3. O sistema exibe os dados cadastrados.
-4. O usuário altera as informações necessárias.
-5. O sistema valida os dados.
-6. O sistema salva as alterações.
-
-### Fluxo Alternativo
-
-- Caso os dados sejam inválidos, o sistema solicita correção.
-
-### Pós-condição
-
-Os dados do cliente são atualizados.
+* **Atores**: Administrador ou Funcionário.
+* **Objetivo**: Corrigir ou atualizar o cadastro do tutor (telefone, endereço, etc.).
+* **Pré-condições**: Operador autenticado e cliente selecionado.
+* **Entradas**: Novos dados do cliente.
+* **Saídas**: Mensagem "Cadastro atualizado com sucesso".
 
 ---
 
-## UC06 — Excluir Cliente
+### UC06 — Excluir Cliente
 
-### Ator Principal
+* **Atores**: Administrador.
+* **Objetivo**: Remover um cliente do banco de dados da clínica.
+* **Pré-condições**: Administrador autenticado.
+* **Entradas**: Confirmação de exclusão.
+* **Saídas**: Remoção em cascata dos registros.
 
-Administrador.
-
-### Objetivo
-
-Permitir a remoção de um cliente do sistema.
-
-### Pré-condições
-
-- O administrador deve estar autenticado.
-- O cliente deve existir no sistema.
-
-### Fluxo Principal
-
-1. O administrador acessa a lista de clientes.
-2. O administrador seleciona o cliente.
-3. O sistema solicita confirmação da exclusão.
-4. O administrador confirma a ação.
-5. O sistema remove o cliente.
-
-### Fluxo Alternativo
-
-- Caso o administrador cancele a operação, nenhuma alteração é realizada.
-
-### Pós-condição
-
-O cliente é removido do sistema.
+> [!CAUTION]
+> **Aviso de Cascata:** A exclusão de um cliente remove automaticamente todos os seus pets e históricos de atendimento associados do banco de dados devido à integridade referencial.
 
 ---
 
-## UC07 — Cadastrar Pet
+### UC07 — Cadastrar Pet
 
-### Ator Principal
-
-Administrador ou Funcionário.
-
-### Objetivo
-
-Registrar os dados de um pet vinculado a um cliente.
-
-### Pré-condições
-
-- O usuário deve estar autenticado.
-- O cliente responsável pelo pet deve estar cadastrado.
-
-### Fluxo Principal
-
-1. O usuário acessa a área de pets.
-2. O usuário seleciona a opção de cadastrar pet.
-3. O sistema apresenta o formulário.
-4. O usuário informa os dados do pet.
-5. O usuário vincula o pet a um cliente.
-6. O sistema valida as informações.
-7. O sistema salva o pet.
-
-### Fluxo Alternativo
-
-- Caso nenhum cliente seja selecionado, o sistema solicita o vínculo com um tutor.
-
-### Pós-condição
-
-O pet fica cadastrado e vinculado ao cliente.
+* **Atores**: Administrador ou Funcionário.
+* **Objetivo**: Cadastrar um animal e associá-lo a um tutor cadastrado.
+* **Pré-condições**: Tutor (Cliente) deve estar previamente cadastrado.
+* **Entradas**: Nome do animal, espécie (selectbox), raça, idade, peso e tutor responsável.
+* **Saídas**: Pet registrado e vinculado ao ID do cliente.
 
 ---
 
-## UC08 — Consultar Pet
+### UC08 — Consultar Pet
 
-### Ator Principal
-
-Administrador, Funcionário ou Veterinário.
-
-### Objetivo
-
-Permitir a visualização dos pets cadastrados.
-
-### Pré-condições
-
-- O usuário deve estar autenticado.
-- Deve existir ao menos um pet cadastrado.
-
-### Fluxo Principal
-
-1. O usuário acessa a área de pets.
-2. O sistema lista os pets cadastrados.
-3. O usuário visualiza os dados do pet.
-4. O usuário pode consultar o tutor vinculado ao pet.
-
-### Fluxo Alternativo
-
-- Caso não existam pets cadastrados, o sistema informa que nenhum registro foi encontrado.
-
-### Pós-condição
-
-Os dados do pet são exibidos ao usuário.
+* **Atores**: Administrador, Funcionário ou Veterinário.
+* **Objetivo**: Pesquisar animais por nome ou pelo nome do tutor.
+* **Pré-condições**: Pet registrado na base.
+* **Entradas**: Nome do pet ou tutor.
+* **Saídas**: Detalhes do animal e identificação do dono.
 
 ---
 
-## UC09 — Atualizar Pet
+### UC09 — Atualizar Pet
 
-### Ator Principal
-
-Administrador, Funcionário ou Veterinário.
-
-### Objetivo
-
-Permitir a alteração dos dados de um pet cadastrado.
-
-### Pré-condições
-
-- O usuário deve estar autenticado.
-- O pet deve existir no sistema.
-
-### Fluxo Principal
-
-1. O usuário acessa a lista de pets.
-2. O usuário seleciona o pet desejado.
-3. O sistema exibe os dados cadastrados.
-4. O usuário altera as informações necessárias.
-5. O sistema valida os dados.
-6. O sistema salva as alterações.
-
-### Fluxo Alternativo
-
-- Caso os dados estejam inválidos, o sistema solicita correção.
-
-### Pós-condição
-
-Os dados do pet são atualizados.
+* **Atores**: Administrador, Funcionário ou Veterinário.
+* **Objetivo**: Atualizar o peso, idade ou raça do animal após uma nova consulta.
+* **Pré-condições**: Pet selecionado na listagem.
 
 ---
 
-## UC10 — Excluir Pet
+### UC10 — Excluir Pet
 
-### Ator Principal
+* **Atores**: Administrador.
+* **Objetivo**: Remover permanentemente o cadastro de um animal.
 
-Administrador.
-
-### Objetivo
-
-Permitir a remoção de um pet do sistema.
-
-### Pré-condições
-
-- O administrador deve estar autenticado.
-- O pet deve existir no sistema.
-
-### Fluxo Principal
-
-1. O administrador acessa a lista de pets.
-2. O administrador seleciona o pet.
-3. O sistema solicita confirmação da exclusão.
-4. O administrador confirma a ação.
-5. O sistema remove o pet.
-
-### Fluxo Alternativo
-
-- Caso o administrador cancele a operação, nenhuma alteração é realizada.
-
-### Pós-condição
-
-O pet é removido do sistema.
+> [!CAUTION]
+> **Privilégio Exclusivo:** Apenas o Administrador pode excluir um pet, o que acarreta a exclusão automática de todo o seu histórico clínico (atendimentos).
 
 ---
 
-## UC11 — Registrar Atendimento
+### UC11 — Registrar Atendimento
 
-### Ator Principal
+* **Atores**: Administrador ou Veterinário.
+* **Objetivo**: Lançar dados da consulta clínica do animal, medicamentos e observações.
+* **Pré-condições**: Pet previamente cadastrado no banco.
+* **Entradas**: Pet selecionado, motivo (Consulta, Vacina, Cirurgia), descrição detalhada.
+* **Saídas**: Atendimento gravado com data e hora automática.
 
-Administrador ou Veterinário.
-
-### Objetivo
-
-Registrar informações sobre uma consulta ou procedimento veterinário.
-
-### Pré-condições
-
-- O usuário deve estar autenticado.
-- O pet deve estar cadastrado.
-
-### Fluxo Principal
-
-1. O usuário acessa a área de atendimentos.
-2. O usuário seleciona a opção de novo atendimento.
-3. O sistema exibe o formulário de atendimento.
-4. O usuário seleciona o pet.
-5. O usuário informa a data, descrição, diagnóstico e observações.
-6. O sistema valida os dados.
-7. O sistema salva o atendimento.
-
-### Fluxo Alternativo
-
-- Caso o pet não esteja cadastrado, o sistema solicita o cadastro do pet antes do atendimento.
-
-### Pós-condição
-
-O atendimento fica registrado no sistema.
+| Passo | Ação do Ator | Resposta do Sistema |
+| :---: | :--- | :--- |
+| **1** | Seleciona o pet atendido na tela e preenche o prontuário. | Resgata informações básicas do pet. |
+| **2** | Digita observações clínicas e clica em "Salvar". | Valida associação, cria data do sistema, persiste dados na tabela `atendimentos` e retorna `HTTP 201`. |
 
 ---
 
-## UC12 — Consultar Atendimento
+### UC12 — Consultar Atendimento
 
-### Ator Principal
-
-Administrador, Funcionário ou Veterinário.
-
-### Objetivo
-
-Permitir a visualização dos atendimentos registrados.
-
-### Pré-condições
-
-- O usuário deve estar autenticado.
-- Deve existir ao menos um atendimento registrado.
-
-### Fluxo Principal
-
-1. O usuário acessa a área de atendimentos.
-2. O sistema lista os atendimentos registrados.
-3. O usuário visualiza as informações do atendimento.
-4. O usuário pode consultar o pet relacionado ao atendimento.
-
-### Fluxo Alternativo
-
-- Caso não existam atendimentos cadastrados, o sistema informa que nenhum atendimento foi encontrado.
-
-### Pós-condição
-
-Os dados do atendimento são exibidos ao usuário.
+* **Atores**: Administrador, Funcionário ou Veterinário.
+* **Objetivo**: Visualizar a lista de consultas da clínica ou o histórico clínico de um pet específico.
+* **Pré-condições**: Atendimentos registrados.
+* **Entradas**: Seleção do Pet ou busca global.
+* **Saídas**: Exibição em tela das consultas com data, motivo e descrição.
 
 ---
 
-## 5. Regras Relacionadas aos Casos de Uso
+## 5. Regras Lógicas de Sistema
 
-| Código | Regra | Descrição |
-|---|---|---|
-| RN01 | Login obrigatório | Apenas usuários autenticados podem acessar o sistema. |
-| RN02 | Cliente obrigatório | Todo pet deve estar vinculado a um cliente. |
-| RN03 | Pet obrigatório | Todo atendimento deve estar vinculado a um pet. |
-| RN04 | Permissão de exclusão | Apenas administradores podem excluir registros importantes. |
-| RN05 | Dados obrigatórios | Cadastros devem possuir campos mínimos preenchidos. |
-
----
-
-## 6. Considerações Finais
-
-Os casos de uso apresentados representam as principais funcionalidades do sistema **MedPet**.
-
-Eles servem como base para:
-
-- A criação dos diagramas UML
-- O desenvolvimento das funcionalidades
-- A divisão de tarefas entre os integrantes
-- A validação dos requisitos do sistema
-- A apresentação final do projeto
-
-Este documento poderá ser atualizado conforme o sistema evoluir durante o desenvolvimento.
+1. **Autenticação**: O frontend impede o carregamento de abas internas se o token JWT não estiver na Session State do Streamlit.
+2. **Cascata**: Excluir clientes aciona o cascade no SQLAlchemy apagando recursivamente pets e atendimentos.
+3. **Consistência de Dados**: O peso de pets deve ser maior que zero; o CPF do cliente deve possuir 11 dígitos numéricos válidos.
