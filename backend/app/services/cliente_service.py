@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from app.repositories.cliente_repository import ClienteRepository
 from app.models.cliente import Cliente
-from app.schemas.cliente_schema import ClienteCreate
+from app.schemas.cliente_schema import ClienteCreate, ClienteUpdate
 
 class ClienteService:
     def __init__(self, db: Session):
@@ -9,6 +9,22 @@ class ClienteService:
 
     def get_by_id(self, cliente_id: int):
         return self.repository.get_by_id(cliente_id)
+
+    def update(self, cliente_id: int, cliente_in: ClienteUpdate) -> Cliente:
+        cliente = self.repository.get_by_id(cliente_id)
+        if not cliente:
+            raise ValueError("Cliente não encontrado.")
+
+        updated_data = cliente_in.dict(exclude_unset=True)
+
+        return self.repository.update(cliente, updated_data)
+    
+    def delete(self, cliente_id: int):
+        cliente = self.repository.get_by_id(cliente_id)
+        if not cliente:
+            raise ValueError("Cliente não encontrado.")
+
+        self.repository.delete(cliente)
 
     def create(self, cliente_in: ClienteCreate) -> Cliente:
         # Validar CPF único
