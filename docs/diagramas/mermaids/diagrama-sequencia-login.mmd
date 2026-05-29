@@ -1,0 +1,28 @@
+sequenceDiagram
+    autonumber
+    actor Operador as 👤 Operador (Atendente/Vet/Admin)
+    participant Streamlit as 💻 Streamlit (Frontend)
+    participant FastAPI as 🚀 FastAPI (Route /auth/login)
+    participant Service as ⚙️ AuthService
+    participant Repo as 🗄️ UsuarioRepository
+    participant DB as 💾 Banco de Dados (SQLite)
+
+    Operador->>Streamlit: Insere e-mail e senha e clica em Login
+    Streamlit->>FastAPI: POST /auth/login { username, password }
+    FastAPI->>Service: authenticate_user(login_request)
+    Service->>Repo: get_by_email(username)
+    Repo->>DB: SELECT * FROM usuarios WHERE email = username
+    DB-->>Repo: Retorna dados do Usuário (id, nome, senha_hash)
+    Repo-->>Service: Retorna objeto Usuario
+    
+    alt Usuário existe e senha_hash é válida (bcrypt)
+        Service->>Service: Gerar Token JWT com claims (id, email, perfil)
+        Service-->>FastAPI: Retorna { access_token, token_type: "bearer" }
+        FastAPI-->>Streamlit: HTTP 200 OK com Token JSON
+        Streamlit->>Streamlit: Salva Token na Session State
+        Streamlit-->>Operador: Exibe "Login realizado com sucesso!" e redireciona
+    else Credenciais inválidas / Usuário não encontrado
+        Service-->>FastAPI: Retorna None
+        FastAPI-->>Streamlit: HTTP 401 Unauthorized { "detail": "E-mail ou senha incorretos." }
+        Streamlit-->>Operador: Exibe mensagem de erro na interface
+    end
