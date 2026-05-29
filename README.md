@@ -2,7 +2,7 @@
 
 Projeto desenvolvido para a disciplina **Análise e Projeto de Sistemas (APS)**, com o objetivo de construir um sistema web simples, funcional e bem estruturado para auxiliar na gestão básica de uma clínica veterinária.
 
-O sistema será desenvolvido com **FastAPI** no backend e **Streamlit** no frontend, seguindo a proposta do trabalho de criar uma aplicação web completa, com API, interface, banco de dados, documentação e organização baseada em boas práticas de Engenharia de Software.
+O sistema é construído com **FastAPI** no backend e **Streamlit** no frontend, seguindo a proposta de criar uma aplicação web completa contendo API, interface, banco de dados, documentação e organização baseada em boas práticas de Engenharia de Software.
 
 ---
 
@@ -35,14 +35,9 @@ O sistema é destinado a pequenas clínicas veterinárias, atendentes, veteriná
 
 ## 👤 Perfis de Usuário
 
-### Administrador
-Responsável por gerenciar o sistema, visualizar dados gerais e manter os cadastros principais.
-
-### Atendente
-Responsável por cadastrar clientes, pets e consultar informações básicas.
-
-### Veterinário
-Responsável por registrar atendimentos, histórico clínico e observações sobre os pets.
+* **Administrador**: Responsável por gerenciar o sistema, visualizar dados gerais e manter os cadastros principais.
+* **Atendente**: Responsável por cadastrar clientes, pets e consultar informações básicas.
+* **Veterinário**: Responsável por registrar atendimentos, histórico clínico e observações sobre os pets.
 
 ---
 
@@ -88,36 +83,49 @@ Responsável por registrar atendimentos, histórico clínico e observações sob
 ![SQLAlchemy](https://img.shields.io/badge/SQLAlchemy-D71F00?style=for-the-badge&logo=sqlalchemy&logoColor=white)
 ![Pytest](https://img.shields.io/badge/Pytest-0A9EDC?style=for-the-badge&logo=pytest&logoColor=white)
 ![JWT](https://img.shields.io/badge/JWT-black?style=for-the-badge&logo=JSON%20web%20tokens)
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
 ![GitHub](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)
 
-<br>
-
-- **Python** — linguagem principal do projeto;
-- **FastAPI** — criação da API REST;
-- **Streamlit** — construção da interface web;
+- **Python** — Linguagem principal do projeto;
+- **FastAPI** — Criação da API REST do backend;
+- **Streamlit** — Construção da interface web (frontend);
 - **SQLAlchemy** — ORM para comunicação com o banco de dados;
-- **SQLite** — banco de dados utilizado na versão inicial;
-- **Pydantic** — validação dos dados da API;
-- **Pytest** — testes automatizados;
-- **JWT** — autenticação e segurança;
-- **Git/GitHub** — versionamento e entrega do projeto.
+- **SQLite** — Banco de dados local para persistência de dados;
+- **Pydantic** — Validação de schemas e dados na API;
+- **Pytest** — Testes automatizados;
+- **JWT** — Autenticação e controle de segurança;
+- **Docker / Docker Compose** — Containerização e facilidade no setup;
+- **Git/GitHub** — Versionamento de código.
 
 ---
 
 ## 🏗️ Arquitetura do Sistema
 
-O projeto será dividido em três camadas principais:
+O projeto é dividido em três camadas principais:
 
-1. **Frontend**  
-   Interface web desenvolvida em Streamlit, responsável por exibir telas, formulários e tabelas para o usuário.
+1. **Frontend**: Interface web em Streamlit para visualização de telas, formulários e tabelas.
+2. **Backend**: API REST em FastAPI contendo as regras de negócio, autenticação e rotas.
+3. **Banco de Dados**: SQLite gerenciado via SQLAlchemy ORM para persistência dos dados.
 
-2. **Backend**  
-   API REST desenvolvida em FastAPI, responsável pelas regras de negócio, autenticação e endpoints do sistema.
-
-3. **Banco de Dados**  
-   Camada de persistência responsável por armazenar usuários, clientes, pets e atendimentos.
-
-A comunicação entre frontend e backend será feita via requisições HTTP utilizando dados no formato JSON.
+```mermaid
+graph LR
+    subgraph Frontend
+        A[Interface Streamlit]
+    end
+    subgraph Backend
+        B[API FastAPI]
+        D[Regras de Negócio / Services]
+        E[Repositórios / Database Layer]
+    end
+    subgraph Persistência
+        C[(SQLite Database)]
+    end
+    
+    A <-->|Requisições HTTP / JSON| B
+    B <--> D
+    D <--> E
+    E <-->|SQLAlchemy ORM| C
+```
 
 ---
 
@@ -126,85 +134,75 @@ A comunicação entre frontend e backend será feita via requisições HTTP util
 ```text
 MedPet/
 │
-├── backend/                  # API Rest com FastAPI
+├── backend/                  # API REST com FastAPI
 │   ├── app/
-│   │   ├── core/             # Configurações e segurança do sistema
-│   │   │   ├── __init__.py
+│   │   ├── core/             # Configurações globais e segurança
 │   │   │   ├── config.py
 │   │   │   ├── security.py
 │   │   │   └── dependencies.py
-│   │   ├── models/           # Tabelas do banco de dados (SQLAlchemy)
-│   │   │   ├── __init__.py
+│   │   ├── models/           # Entidades do SQLAlchemy (Tabelas)
 │   │   │   ├── atendimento.py
 │   │   │   ├── cliente.py
 │   │   │   ├── pet.py
 │   │   │   └── usuario.py
-│   │   ├── repositories/     # Operações no banco de dados
-│   │   │   ├── __init__.py
+│   │   ├── repositories/     # Lógica de persistência e acesso ao DB
 │   │   │   ├── atendimento_repository.py
 │   │   │   ├── cliente_repository.py
 │   │   │   ├── pet_repository.py
 │   │   │   └── usuario_repository.py
-│   │   ├── routes/           # Endpoints da API (Rotas)
-│   │   │   ├── __init__.py
+│   │   ├── routes/           # Endpoints HTTP da API (Controllers)
 │   │   │   ├── auth_routes.py
 │   │   │   ├── atendimento_routes.py
 │   │   │   ├── cliente_routes.py
 │   │   │   ├── pet_routes.py
 │   │   │   └── usuario_routes.py
-│   │   ├── schemas/          # Validação de dados (Pydantic)
-│   │   │   ├── __init__.py
+│   │   ├── schemas/          # Schemas do Pydantic (Validação e I/O)
 │   │   │   ├── auth_schema.py
 │   │   │   ├── atendimento_schema.py
 │   │   │   ├── cliente_schema.py
 │   │   │   ├── pet_schema.py
 │   │   │   └── usuario_schema.py
-│   │   ├── services/         # Regras de negócio da aplicação
-│   │   │   ├── __init__.py
+│   │   ├── services/         # Camada de Regras de Negócio
 │   │   │   ├── auth_service.py
 │   │   │   ├── atendimento_service.py
 │   │   │   ├── cliente_service.py
 │   │   │   ├── pet_service.py
 │   │   │   └── usuario_service.py
-│   │   ├── database.py       # Conexão e Sessão do Banco de Dados
-│   │   └── main.py           # Ponto de entrada da API
+│   │   ├── database.py       # Configuração e sessão do banco de dados
+│   │   └── main.py           # Inicialização e ponto de partida do backend
 │   │
-│   ├── scripts/              # Scripts auxiliares e de povoamento
+│   ├── scripts/              # Scripts auxiliares (Povoamento / Seeds)
 │   │   └── seed.py
 │   │
-│   ├── Dockerfile            # Dockerfile para containerização do Backend
+│   ├── Dockerfile            # Configuração Docker para o Backend
 │   └── requirements.txt      # Dependências do backend
 │
 ├── frontend/                 # Interface Web com Streamlit
 │   ├── app.py                # Ponto de entrada do Frontend
-│   ├── Dockerfile            # Dockerfile para containerização do Frontend
+│   ├── Dockerfile            # Configuração Docker para o Frontend
 │   └── requirements.txt      # Dependências do frontend
 │
-├── tests/                    # Pasta raiz de testes automatizados
-│   ├── __init__.py           # Inicializador de módulo de testes
+├── tests/                    # Testes automatizados do sistema
 │   ├── conftest.py           # Fixtures e configurações globais do Pytest
-│   ├── api/                  # Testes integrados da API
-│   │   └── __init__.py
-│   ├── ui/                   # Testes de interface visual
-│   │   └── __init__.py
-│   └── unit/                 # Testes unitários de serviços e regras
-│       └── __init__.py
+│   ├── api/                  # Testes de rotas e integração da API
+│   ├── ui/                   # Testes de componentes de UI
+│   └── unit/                 # Testes de lógica de negócio isolada
 │
-├── docs/                     # Documentação de modelagem e requisitos
-│   ├── diagramas/            # Modelagens UML (Usecase, Class, etc.)
+├── docs/                     # Documentos de modelagem, UML e requisitos
+│   ├── diagramas/            # Imagens e arquivos de modelagem UML
 │   ├── casos-de-uso.md
 │   ├── requisitos.md
 │   └── roteiro-apresentacao.md
 │
-├── .github/                  # Configurações do GitHub Actions (CI/CD)
+├── .github/                  # CI/CD (GitHub Actions)
 │   └── workflows/
-│       └── ci.yml            # Pipeline de integração contínua (testes e linting)
+│       └── ci.yml            # Testes e validações automáticas no Push/PR
 │
-├── .env.example              # Exemplo de variáveis de ambiente configuráveis
-├── .gitignore
-├── docker-compose.yml        # Configuração para containers Docker
-├── requirements-dev.txt      # Dependências do ambiente de desenvolvimento
-└── README.md                 # Documentação principal do projeto
+├── .env.example              # Exemplo de variáveis de ambiente do projeto
+├── .gitignore                # Arquivos ignorados pelo controle de versão
+├── docker-compose.yml        # Orquestração simplificada dos containers
+├── requirements-dev.txt      # Ferramentas auxiliares de desenvolvimento
+└── README.md                 # Documentação principal
 ```
 
 ---
@@ -212,145 +210,187 @@ MedPet/
 ## 🔗 Principais Endpoints da API
 
 ### Autenticação
-```http
-POST /auth/login
-POST /auth/register
-```
+* `POST /auth/register` — Cadastro de novos usuários.
+* `POST /auth/login` — Login do usuário para obtenção do Token JWT.
 
-### Clientes
-```http
-GET    /clientes
-POST   /clientes
-GET    /clientes/{id}
-PUT    /clientes/{id}
-DELETE /clientes/{id}
-```
+### Clientes (Tutores)
+* `GET /clientes` — Listagem de todos os clientes.
+* `POST /clientes` — Criação de um novo cliente.
+* `GET /clientes/{id}` — Detalhes de um cliente específico.
+* `PUT /clientes/{id}` — Atualização cadastral de cliente.
+* `DELETE /clientes/{id}` — Exclusão de um cliente.
 
 ### Pets
-```http
-GET    /pets
-POST   /pets
-GET    /pets/{id}
-PUT    /pets/{id}
-DELETE /pets/{id}
-```
+* `GET /pets` — Listagem de todos os pets cadastrados.
+* `POST /pets` — Cadastro de um pet associado a um tutor (cliente).
+* `GET /pets/{id}` — Consulta de detalhes de um pet.
+* `PUT /pets/{id}` — Atualização dos dados de um pet.
+* `DELETE /pets/{id}` — Exclusão de um pet.
 
 ### Atendimentos
-```http
-GET    /atendimentos
-POST   /atendimentos
-GET    /atendimentos/{id}
-PUT    /atendimentos/{id}
-DELETE /atendimentos/{id}
-```
+* `GET /atendimentos` — Listagem de atendimentos.
+* `POST /atendimentos` — Registro de um atendimento associado a um pet.
+* `GET /atendimentos/{id}` — Consulta detalhada de atendimento.
+* `PUT /atendimentos/{id}` — Atualização de observações clínicas.
+* `DELETE /atendimentos/{id}` — Exclusão de atendimento.
+
+> [!TIP]
+> Com a API rodando, você pode acessar a interface interativa do Swagger em: `http://localhost:8000/docs`.
 
 ---
 
 ## 🧩 Padrões de Projeto Aplicados
 
-### MVC Adaptado
-Separação entre interface, rotas, regras de negócio e modelos.
-
-### Repository
-Isolamento da lógica de acesso ao banco de dados.
-
-### Service Layer
-Separação das regras de negócio em serviços específicos.
+* **MVC Adaptado (Model-View-Controller)**: Separação clara entre a interface visual (View), lógica de rotas/endpoints (Controller), validações/negócio (Service) e estruturas de dados (Model).
+* **Repository Pattern**: Abstração do acesso ao banco de dados para simplificar testes e isolar as operações do SQLAlchemy.
+* **Service Layer**: Concentração de todas as regras de negócio e validações, deixando as rotas focadas apenas em tratar a requisição e a resposta HTTP.
 
 ---
 
 ## 🧪 Testes
 
-Os testes serão realizados de duas formas:
-
 ### Testes Manuais
-- Validação dos endpoints pela documentação Swagger;
-- Testes de cadastro, edição, listagem e exclusão;
-- Verificação do fluxo entre Streamlit e FastAPI.
+* Validação dos endpoints usando a documentação gerada pelo Swagger;
+* Verificação visual de fluxos de telas no Streamlit;
+* Testes pontuais de exclusão e edição de relacionamentos.
 
 ### Testes Automatizados
-- Testes com Pytest para validar os principais endpoints;
-- Verificação de respostas esperadas;
-- Testes de erros, como registros inexistentes ou dados inválidos.
+* Utilização do **Pytest** para validar os cenários e fluxos da API de forma isolada;
+* Verificação de tratamentos de erro (ex: requisições sem tokens, exclusões inválidas, validação de campos obrigatórios).
 
-Exemplos de cenários:
+#### Tabela de Casos de Teste Principais
 
-| ID | Cenário | Resultado Esperado |
+| ID | Cenário de Teste | Resultado Esperado |
 |---|---|---|
-| CT01 | Login com dados válidos | Usuário autenticado com sucesso |
-| CT02 | Cadastro de cliente válido | Cliente salvo no banco |
-| CT03 | Cadastro de pet sem tutor | Erro de validação |
-| CT04 | Consulta de atendimentos | Lista de atendimentos retornada |
+| **CT01** | Autenticação com credenciais válidas | Retorno de Token JWT com sucesso |
+| **CT02** | Cadastro de novo cliente/tutor | Registro gravado no banco de dados e ID gerado |
+| **CT03** | Cadastro de pet sem fornecer ID do tutor | Retorno de erro HTTP 400 ou correspondente |
+| **CT04** | Consulta de histórico de atendimentos | Retorno de lista de atendimentos válida |
 
 ---
 
 ## ▶️ Como Executar o Projeto
 
-> **Dica:** Para simplificar a execução em projetos acadêmicos e não se preocupar com conflitos, o passo a passo abaixo usa a instalação direta (sem criar ambiente virtual/venv), visando facilitar a inicialização. 
+Você pode rodar o MedPet localmente de três formas diferentes: usando **Docker Compose**, criando um **Ambiente Virtual (venv)** ou fazendo a **Instalação Direta** das dependências.
 
-### 1. Clone o repositório
+> [!IMPORTANT]
+> Antes de começar, renomeie o arquivo `.env.example` na raiz do projeto para `.env` e ajuste as variáveis de ambiente, caso necessário.
 
-```bash
-git clone https://github.com/GuiCodeLabs/MedPet.git
-cd MedPet
-```
+### Método A: Utilizando Docker Compose (Mais Rápido 🚀)
 
-### 2. Instale as dependências
-
-Instale os pacotes necessários tanto do Backend quanto do Frontend:
+Caso tenha o Docker instalado na máquina, basta subir os serviços com um único comando na raiz do projeto:
 
 ```bash
-pip install -r backend/requirements.txt
-pip install -r frontend/requirements.txt
+docker-compose up --build
 ```
 
-### 3. Execute o Backend (FastAPI)
-
-No seu terminal, navegue para a pasta do backend e inicie o servidor:
-
-```bash
-cd backend
-uvicorn app.main:app --reload
-```
-
-- **Acesso à API:** `http://localhost:8000`
-- **Documentação Swagger:** `http://localhost:8000/docs`
-
-### 4. Execute o Frontend (Streamlit)
-
-Abra um **novo terminal** (mantenha a aba anterior com o backend rodando), navegue para a pasta frontend e inicie a interface:
-
-```bash
-cd frontend
-streamlit run app.py
-```
-
-- **Acesso à Interface Web:** `http://localhost:8501`
-
-### 5. Execute os Testes Automatizados (Opcional)
-
-Com a estrutura de testes na raiz do projeto, você pode executar as checagens e testes usando as dependências de desenvolvimento:
-
-```bash
-# Instale as dependências de desenvolvimento
-pip install -r requirements-dev.txt
-
-# Execute os testes com PYTHONPATH apontando para a pasta backend
-PYTHONPATH=backend pytest tests/
-```
+* **Frontend (Streamlit):** Acesse `http://localhost:8501`
+* **Backend (FastAPI):** Acesse `http://localhost:8000`
+* **Documentação interativa (Swagger):** Acesse `http://localhost:8000/docs`
 
 ---
 
-## 👨‍💻 Divisão da Equipe
+### Método B: Utilizando Ambiente Virtual Python (Recomendado 🐍)
 
-A divisão das tarefas foi pensada para que todos possam participar do planejamento, backend e frontend:
+Este método isola os pacotes para evitar conflitos na sua máquina.
 
-| Integrante | Papel e Responsabilidades Principais |
-| :--- | :--- |
-| **Guilherme** | Backend base, estrutura do banco de dados e autenticação |
-| **Arllan** | Módulos de tutores, pets e diagramas UML |
-| **Pedro H.** | Frontend Streamlit e integração com a API |
-| **Pedro Antonio**| Consultas, prontuários, relatórios, testes e documentação/README |
+1. **Clone o repositório:**
+   ```bash
+   git clone https://github.com/GuiCodeLabs/MedPet.git
+   cd MedPet
+   ```
+
+2. **Crie e ative o ambiente virtual:**
+   * **No Windows (PowerShell):**
+     ```powershell
+     python -m venv .venv
+     .\.venv\Scripts\Activate.ps1
+     ```
+   * **No Linux/macOS:**
+     ```bash
+     python3 -m venv .venv
+     source .venv/bin/activate
+     ```
+
+3. **Instale as dependências:**
+   ```bash
+   pip install --upgrade pip
+   pip install -r backend/requirements.txt
+   pip install -r frontend/requirements.txt
+   pip install -r requirements-dev.txt
+   ```
+
+4. **Execute o Backend (FastAPI):**
+   ```bash
+   cd backend
+   uvicorn app.main:app --reload
+   ```
+   *(Mantenha este terminal rodando e abra outro)*
+
+5. **Execute o Frontend (Streamlit):**
+   *(Ative o ambiente virtual no novo terminal antes de rodar)*
+   ```bash
+   cd frontend
+   streamlit run app.py
+   ```
+
+---
+
+### Método C: Instalação Direta (Sem Ambiente Virtual)
+
+Se preferir não usar o ambiente virtual, siga os passos abaixo:
+
+1. **Instale as dependências diretamente:**
+   ```bash
+   pip install -r backend/requirements.txt
+   pip install -r frontend/requirements.txt
+   ```
+
+2. **Inicialize o Backend:**
+   ```bash
+   cd backend
+   uvicorn app.main:app --reload
+   ```
+
+3. **Inicialize o Frontend (em outro terminal):**
+   ```bash
+   cd frontend
+   streamlit run app.py
+   ```
+
+---
+
+## 👥 Divisão de Responsabilidades
+
+A divisão abaixo segue a organização das branches definida para o projeto. Cada integrante deve desenvolver sua parte na branch correspondente, enviar as alterações para o repositório remoto e abrir Pull Request para integração na `develop`. Após validação, a versão estável será integrada na `main`.
+
+| Integrante | GitHub | Branch principal | Funcionalidade/Módulo | Responsabilidades |
+|---|---|---|---|---|
+| Pedro Antonio Braz da Silva | [Pedro-Brazz](https://github.com/Pedro-Brazz) | `feature/auth-usuarios` | Autenticação e usuários | Implementar cadastro de usuários, login, autenticação com JWT, hash de senha, controle básico de acesso por perfil, validações de usuário e estrutura de `models`, `schemas`, `routes`, `services` e `repositories` relacionadas a autenticação e usuários. |
+| Pedro Henrique Paiva Barros | [Pedro-hxm](https://github.com/Pedro-hxm) | `feature/clientes` e `feature/pets` | Clientes e pets | Implementar CRUD de clientes/tutores, CRUD de pets, associação de pets aos seus respectivos tutores, validações de cadastro, consulta de pets por cliente e endpoints necessários para listagem, atualização e exclusão desses registros. |
+| Arllan Leopoldino Nunes | [LanNunez](https://github.com/LanNunez) | `feature/atendimentos` | Atendimentos veterinários | Implementar registro de atendimentos, histórico de atendimentos por pet, descrição do motivo da consulta, observações clínicas, data do atendimento, validação de pet existente e endpoints de criação, consulta, atualização e exclusão de atendimentos. |
+| Guilherme Cavalcante Beserra | [GuiCodeLabs](https://github.com/GuiCodeLabs) | `feature/frontend-streamlit` e `feature/docs` | Frontend e documentação | Desenvolver a interface web em Streamlit, criar telas e formulários para autenticação, clientes, pets e atendimentos, consumir a API FastAPI via HTTP/JSON, organizar a documentação do projeto, atualizar o README, estruturar materiais em `docs/` e apoiar a integração final na `develop` e na `main`. |
+
+### Fluxo de integração das branches
+
+```mermaid
+graph TD
+    subgraph "Funcionalidades (feature/*)"
+        F1[feature/auth-usuarios]
+        F2[feature/clientes]
+        F3[feature/pets]
+        F4[feature/atendimentos]
+        F5[feature/frontend-streamlit]
+        F6[feature/docs]
+    end
+    F1 & F2 & F3 & F4 & F5 & F6 --> Develop[develop]
+    Develop -->|Pull Request / Merge| Main[main]
+```
+
+- Cada integrante trabalha em sua própria branch de funcionalidade;
+- As branches de funcionalidade devem ser integradas primeiro na `develop`;
+- A branch `develop` concentra a versão em testes e integração;
+- A branch `main` recebe apenas a versão final, estável e revisada do projeto.
 
 ---
 
@@ -393,9 +433,9 @@ A documentação detalhada do projeto está organizada na pasta `docs/`.
 
 ## 📚 Referências
 
-- Documentação oficial do FastAPI;
-- Documentação oficial do Streamlit;
-- SQLAlchemy ORM;
+- [FastAPI Documentation](https://fastapi.tiangolo.com/)
+- [Streamlit Documentation](https://docs.streamlit.io/)
+- [SQLAlchemy ORM Documentation](https://docs.sqlalchemy.org/)
 - Material da disciplina de Análise e Projeto de Sistemas;
 - Conceitos de UML e Engenharia de Software.
 
@@ -405,9 +445,9 @@ A documentação detalhada do projeto está organizada na pasta `docs/`.
 
 Projeto desenvolvido por:
 
-- Guilherme;
-- Arllan;
-- Pedro H.;
+- Guilherme Cavalcante;
+- Arllan Leopoldino;
+- Pedro Henrique;
 - Pedro Antonio.
 
 ---
