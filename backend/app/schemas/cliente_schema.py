@@ -3,9 +3,7 @@ from datetime import datetime
 from typing import Optional, List
 
 class ClienteBase(BaseModel):
-    nome: str
-    cpf: str
-    email: EmailStr
+    nome: Optional[str] = None
     telefone: Optional[str] = None
     endereco: Optional[str] = None
 
