@@ -10,16 +10,22 @@ class AtendimentoBase(BaseModel):
 
 
 class AtendimentoCreate(AtendimentoBase):
-    pass
+    data: Optional[datetime] = None
+    status: Optional[str] = "Agendada"
+
 
 class AtendimentoUpdate(BaseModel):
     motivo: Optional[str] = None
     descricao: Optional[str] = None
     pet_id: Optional[int] = None
+    data: Optional[datetime] = None
+    status: Optional[str] = None
+
 
 class AtendimentoResponse(AtendimentoBase):
     id: int
     data: datetime
+    status: Optional[str] = None
 
     class Config:
         from_attributes = True

@@ -13,6 +13,7 @@ class Atendimento(Base):
     descricao = Column(String(500), nullable=True)  # Observações clínicas
     pet_id = Column(Integer, ForeignKey("pets.id"), nullable=False)
     data = Column(DateTime(timezone=True), server_default=func.now())
+    status = Column(String(20), default="Agendada")
 
     # Relacionamento de volta para o pet atendido
     pet = relationship("Pet", back_populates="atendimentos")
