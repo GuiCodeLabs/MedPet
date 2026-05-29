@@ -120,7 +120,7 @@ def create_consulta(dados):
     try:
         payload = {
             "motivo": dados["motivo"],
-            "descricao": dados.get("data", ""),
+            "descricao": dados.get("descricao", ""),
             "pet_id": dados["pet_id"]
         }
         response = requests.post(f"{BASE_URL}/atendimentos/", json=payload, timeout=5)
