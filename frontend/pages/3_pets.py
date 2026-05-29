@@ -4,10 +4,11 @@ import sys
 import os
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from components.ui import page_header
+from components.ui import page_header, load_css
 from services.api_client import get_pets, get_tutores, create_pet
 
 st.set_page_config(page_title="Pets - MedPet", page_icon="🐾", layout="wide")
+load_css()
 
 if "logado" not in st.session_state or not st.session_state["logado"]:
     st.warning("Você precisa fazer login para acessar esta página.")
@@ -30,20 +31,27 @@ with col1:
             especie = st.selectbox("Espécie", ["Cachorro", "Gato", "Ave", "Roedor", "Outros"])
             raca = st.text_input("Raça")
             tutor_selecionado = st.selectbox("Tutor", options=list(tutores_options.keys()), format_func=lambda x: tutores_options[x])
-        
-        submit = st.form_submit_button("Salvar Pet", type="primary", width="stretch")
-        if submit:
-            if nome and tutor_selecionado:
-                create_pet({
-                    "nome": nome,
-                    "especie": especie,
-                    "raca": raca,
-                    "tutor_id": tutor_selecionado
-                })
-                st.success(f"Pet {nome} cadastrado com sucesso!")
-                st.rerun()
-            else:
-                st.error("Preencha o nome do pet e selecione um tutor.")
+            
+            submit = st.form_submit_button("Salvar Pet", type="primary", width="stretch")
+            if submit:
+                erros = []
+                if not nome:
+                    erros.append("O nome do pet é obrigatório.")
+                if not tutor_selecionado:
+                    erros.append("Selecione um tutor válido.")
+
+                if not erros:
+                    create_pet({
+                        "nome": nome,
+                        "especie": especie,
+                        "raca": raca,
+                        "tutor_id": tutor_selecionado
+                    })
+                    st.success(f"Pet {nome} cadastrado com sucesso!")
+                    st.rerun()
+                else:
+                    for erro in erros:
+                        st.error(erro)
 
 with col2:
     st.subheader("Pets Cadastrados")

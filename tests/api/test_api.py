@@ -1,3 +1,4 @@
-# API integration and route testing
-def test_placeholder():
-    assert True
+def test_root(client):
+    response = client.get("/")
+    assert response.status_code == 200
+    assert response.json() == {"mensagem": "API MedPet funcionando!"}

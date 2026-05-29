@@ -2,13 +2,15 @@ import streamlit as st
 import pandas as pd
 import sys
 import os
+from datetime import datetime
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from components.ui import page_header
+from components.ui import page_header, load_css
 from utils.export import generate_excel_download, generate_csv_download
 from services.api_client import get_consultas
 
-st.set_page_config(page_title="Relatórios - MedPet", page_icon="📊", layout="wide")
+st.set_page_config(page_title="Relatórios - MedPet", page_icon="📁", layout="wide")
+load_css()
 
 if "logado" not in st.session_state or not st.session_state["logado"]:
     st.warning("Você precisa fazer login para acessar esta página.")
@@ -16,8 +18,9 @@ if "logado" not in st.session_state or not st.session_state["logado"]:
 
 page_header("Relatórios", "Exporte os dados da clínica para análise.")
 
-# Mock data
-df = pd.DataFrame(get_consultas())
+# Buscar dados do backend
+consultas = get_consultas()
+df = pd.DataFrame(consultas)
 
 st.subheader("Filtros")
 col1, col2 = st.columns(2)
@@ -28,14 +31,37 @@ with col2:
 
 st.markdown("---")
 
+# Aplicar filtro de datas se o DataFrame tiver dados e uma coluna de data
+if not df.empty and "data" in df.columns:
+    try:
+        df["data_parsed"] = pd.to_datetime(df["data"], errors="coerce").dt.date
+        df_filtrado = df[
+            (df["data_parsed"] >= data_inicio) & (df["data_parsed"] <= data_fim)
+        ].drop(columns=["data_parsed"])
+    except Exception:
+        df_filtrado = df
+elif not df.empty and "criado_em" in df.columns:
+    try:
+        df["data_parsed"] = pd.to_datetime(df["criado_em"], errors="coerce").dt.date
+        df_filtrado = df[
+            (df["data_parsed"] >= data_inicio) & (df["data_parsed"] <= data_fim)
+        ].drop(columns=["data_parsed"])
+    except Exception:
+        df_filtrado = df
+else:
+    df_filtrado = df
+
 st.subheader("Visualização dos Dados")
-st.dataframe(df, width="stretch")
+if df_filtrado.empty:
+    st.info("Nenhuma consulta encontrada no período selecionado.")
+else:
+    st.dataframe(df_filtrado, width="stretch", hide_index=True)
 
 st.markdown("### Exportar")
 c1, c2, c3 = st.columns(3)
 
-excel_data = generate_excel_download(df)
-csv_data = generate_csv_download(df)
+excel_data = generate_excel_download(df_filtrado)
+csv_data = generate_csv_download(df_filtrado)
 
 with c1:
     st.download_button(

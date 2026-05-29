@@ -1,12 +1,15 @@
 from sqlalchemy.orm import Session
 from app.models.atendimento import Atendimento
 
+
 class AtendimentoRepository:
     def __init__(self, db: Session):
         self.db = db
 
     def get_by_id(self, atendimento_id: int):
-        return self.db.query(Atendimento).filter(Atendimento.id == atendimento_id).first()
+        return (
+            self.db.query(Atendimento).filter(Atendimento.id == atendimento_id).first()
+        )
 
     def create(self, atendimento: Atendimento):
         self.db.add(atendimento)

@@ -3,6 +3,7 @@ from app.repositories.usuario_repository import UsuarioRepository
 from app.core.security import verify_password, create_access_token
 from app.schemas.auth_schema import LoginRequest, TokenResponse
 
+
 class AuthService:
     def __init__(self, db: Session):
         self.repository = UsuarioRepository(db)
@@ -11,7 +12,7 @@ class AuthService:
         user = self.repository.get_by_email(login_data.username)
         if not user:
             return None
-        
+
         if not verify_password(login_data.password, user.senha_hash):
             return None
 
@@ -21,5 +22,7 @@ class AuthService:
 
         return TokenResponse(
             access_token=access_token,
-            token_type="bearer"
+            token_type="bearer",
+            perfil=user.perfil,
+            nome=user.nome,
         )

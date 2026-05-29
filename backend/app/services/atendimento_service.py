@@ -4,6 +4,7 @@ from app.repositories.pet_repository import PetRepository
 from app.models.atendimento import Atendimento
 from app.schemas.atendimento_schema import AtendimentoCreate
 
+
 class AtendimentoService:
     def __init__(self, db: Session):
         self.repository = AtendimentoRepository(db)
@@ -21,7 +22,7 @@ class AtendimentoService:
         db_atendimento = Atendimento(
             motivo=atendimento_in.motivo,
             descricao=atendimento_in.descricao,
-            pet_id=atendimento_in.pet_id
+            pet_id=atendimento_in.pet_id,
         )
         return self.repository.create(db_atendimento)
 

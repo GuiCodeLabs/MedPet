@@ -4,10 +4,11 @@ import sys
 import os
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from components.ui import metric_card, page_header
+from components.ui import metric_card, page_header, load_css
 from services.api_client import get_consultas, get_pets, get_tutores
 
 st.set_page_config(page_title="Dashboard - MedPet", page_icon="🐾", layout="wide")
+load_css()
 
 if "logado" not in st.session_state or not st.session_state["logado"]:
     st.warning("Você precisa fazer login para acessar esta página.")
@@ -17,11 +18,14 @@ page_header(f"Bom dia, {st.session_state.get('nome', 'Usuário')}.", "Aqui está
 
 col1, col2, col3, _ = st.columns([2, 2, 2, 4])
 with col1:
-    st.button("➕ Cadastrar Tutor", width="stretch")
+    if st.button("➕ Cadastrar Tutor", width="stretch"):
+        st.switch_page("pages/2_tutores.py")
 with col2:
-    st.button("🐾 Cadastrar Pet", width="stretch")
+    if st.button("🐾 Cadastrar Pet", width="stretch"):
+        st.switch_page("pages/3_pets.py")
 with col3:
-    st.button("📅 Nova Consulta", width="stretch", type="primary")
+    if st.button("📅 Nova Consulta", width="stretch", type="primary"):
+        st.switch_page("pages/4_consultas.py")
 
 st.markdown("---")
 

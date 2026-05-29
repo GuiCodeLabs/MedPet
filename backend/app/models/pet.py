@@ -4,12 +4,13 @@ from sqlalchemy.sql import func
 
 from app.database import Base
 
+
 class Pet(Base):
     __tablename__ = "pets"
 
     id = Column(Integer, primary_key=True, index=True)
     nome = Column(String(50), nullable=False)
-    especie = Column(String(30), nullable=False) # Ex: Cachorro, Gato
+    especie = Column(String(30), nullable=False)  # Ex: Cachorro, Gato
     raca = Column(String(50), nullable=True)
     idade = Column(Integer, nullable=True)
     peso = Column(Float, nullable=True)
@@ -20,4 +21,6 @@ class Pet(Base):
     dono = relationship("Cliente", back_populates="pets")
 
     # Relacionamento de um pet para muitos atendimentos
-    atendimentos = relationship("Atendimento", back_populates="pet", cascade="all, delete-orphan")
+    atendimentos = relationship(
+        "Atendimento", back_populates="pet", cascade="all, delete-orphan"
+    )
