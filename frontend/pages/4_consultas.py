@@ -6,7 +6,8 @@ import os
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from components.ui import page_header, load_css
-from services.api_client import get_consultas, get_pets, create_consulta, update_consulta
+from services.api_client import get_consultas, get_pets, get_tutores, create_consulta, update_consulta
+from services.pdf_comprovante import gerar_comprovante
 
 st.set_page_config(page_title="Consultas - MedPet", page_icon="🩺", layout="wide")
 load_css()
@@ -37,11 +38,16 @@ STATUS_CORES = {
 
 STATUS_OPTIONS = list(STATUS_CORES.keys())
 
-# ─── Layout principal ───
-col1, col2 = st.columns([1, 2])
-
+# ─── Carregar dados auxiliares (pets e tutores) ───
 pets = get_pets()
 pets_options = {p["id"]: p["nome"] for p in pets}
+pets_map = {p["id"]: p for p in pets}  # mapa completo para o PDF
+
+tutores = get_tutores()
+tutores_map = {t["id"]: t for t in tutores}  # mapa id -> tutor
+
+# ─── Layout principal ───
+col1, col2 = st.columns([1, 2])
 
 # ══════════════════════════════════════════════════
 # COLUNA 1 — Formulário de Agendamento
@@ -162,6 +168,7 @@ with col2:
 
                 registro = {
                     "id": c.get("id"),
+                    "pet_id": c.get("pet_id"),
                     "Pet": c.get("pet", "Desconhecido"),
                     "Motivo": c.get("motivo", "-"),
                     "Observações": c.get("descricao") or "-",
@@ -184,7 +191,7 @@ with col2:
 
             tab_proximas, tab_historico = st.tabs(["📅 Próximas Consultas", "📜 Histórico"])
 
-            # ── Função para renderizar tabela com status e ações ──
+            # ── Função para renderizar cards com status e comprovante ──
             def renderizar_tabela(registros, tab_key):
                 if not registros:
                     st.info("Nenhuma consulta nesta categoria.")
@@ -212,6 +219,33 @@ with col2:
                             if novo_status != status_atual:
                                 update_consulta(reg["id"], {"status": novo_status})
                                 st.rerun()
+
+                        # ── Botão de Comprovante PDF ──
+                        # Buscar dados completos do pet e tutor para o PDF
+                        pet_id = reg.get("pet_id")
+                        pet_data = pets_map.get(pet_id, {})
+                        tutor_id = pet_data.get("tutor_id") or pet_data.get("cliente_id")
+                        tutor_data = tutores_map.get(tutor_id, {}) if tutor_id else {}
+
+                        try:
+                            pdf_bytes = gerar_comprovante(
+                                consulta=reg,
+                                pet_info=pet_data if pet_data else None,
+                                tutor_info=tutor_data if tutor_data else None
+                            )
+
+                            nome_arquivo = f"comprovante_consulta_{reg['id']}_{reg['Data'].replace('/', '-')}.pdf"
+
+                            st.download_button(
+                                label="📄 Baixar Comprovante",
+                                data=pdf_bytes,
+                                file_name=nome_arquivo,
+                                mime="application/pdf",
+                                key=f"pdf_{tab_key}_{reg['id']}_{i}",
+                                use_container_width=True
+                            )
+                        except Exception as e:
+                            st.error(f"Erro ao gerar PDF: {e}")
 
             with tab_proximas:
                 st.caption(f"**{len(proximas)}** consulta(s) agendada(s)")
