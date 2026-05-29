@@ -1,0 +1,41 @@
+stateDiagram-v2
+    [*] --> Recepcao
+
+    state Recepcao {
+        [*] --> ReceberCliente : Receber Cliente e Pet na recepção
+        ReceberCliente --> VerificarTutor : Verificar se Tutor (Cliente) já possui cadastro
+    }
+
+    state VerificarTutor <<choice>>
+    VerificarTutor --> CadastrarTutor : Não
+    VerificarTutor --> VerificarPet : Sim
+
+    state CadastrarTutor {
+        [*] --> FormTutor : Preencher Nome, CPF, E-mail, Telefone e Endereço
+        FormTutor --> SalvarTutorAPI : Enviar POST /clientes/
+        SalvarTutorAPI --> TutorCadastrado : Retorno 201 Created do Backend
+    }
+
+    TutorCadastrado --> VerificarPet
+
+    state VerificarPet <<choice>>
+    VerificarPet --> CadastrarPet : Não
+    VerificarPet --> RegistrarAtendimento : Sim
+
+    state CadastrarPet {
+        [*] --> FormPet : Preencher Nome, Espécie, Raça, Idade e Peso
+        FormPet --> AssociarTutor : Vincular ao ID do Tutor cadastrado
+        AssociarTutor --> SalvarPetAPI : Enviar POST /pets/
+        SalvarPetAPI --> PetCadastrado : Retorno 201 Created do Backend
+    }
+
+    PetCadastrado --> RegistrarAtendimento
+
+    state RegistrarAtendimento {
+        [*] --> FormAtendimento : Informar Motivo (Consulta/Vacina) e Observações Clínicas
+        FormAtendimento --> VincularPet : Vincular ao ID do Pet selecionado
+        VincularPet --> SalvarAtendimentoAPI : Enviar POST /atendimentos/
+        SalvarAtendimentoAPI --> AtendimentoRegistrado : Retorno 201 Created do Backend
+    }
+
+    AtendimentoRegistrado --> [*]
