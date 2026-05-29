@@ -22,3 +22,11 @@ class PetResponse(PetBase):
 
     class Config:
         from_attributes = True
+
+class PetUpdate(BaseModel):
+    nome: Optional[str] = None
+    especie: Optional[str] = None
+    raca: Optional[str] = None
+    idade: Optional[int] = None
+    peso: Optional[float] = None
+    cliente_id: Optional[int] = None

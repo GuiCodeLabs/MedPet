@@ -4,14 +4,19 @@ from typing import Optional
 
 
 class ClienteBase(BaseModel):
-    nome: str
-    cpf: str
-    email: EmailStr
+    nome: Optional[str] = None
+    cpf: Optional[str] = None
+    email: Optional[EmailStr] = None
     telefone: Optional[str] = None
     endereco: Optional[str] = None
 
 
 class ClienteCreate(ClienteBase):
+    nome: str
+    cpf: str
+    email: EmailStr
+
+class ClienteUpdate(ClienteBase):
     pass
 
 
