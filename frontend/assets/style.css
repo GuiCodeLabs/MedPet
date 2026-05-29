@@ -1,0 +1,62 @@
+/* MedPets Global Styles */
+
+/* Metric Card */
+.metric-card {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px solid #e0e3e5;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    margin-bottom: 1rem;
+}
+
+.metric-card-content p.metric-title {
+    color: #727783;
+    font-size: 14px;
+    margin: 0 0 4px 0;
+    font-weight: 500;
+}
+
+.metric-card-content p.metric-value {
+    color: #191c1e;
+    font-size: 28px;
+    font-weight: 700;
+    margin: 0;
+}
+
+.metric-card-icon {
+    background-color: #f2f4f6;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Page Header */
+.page-header-desc {
+    color: #727783;
+    margin-top: -10px;
+    margin-bottom: 20px;
+    font-size: 16px;
+}
+
+/* Login Header */
+.login-title {
+    text-align: center;
+    color: #00478d;
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+}
+
+.login-subtitle {
+    text-align: center;
+    color: #727783;
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+}

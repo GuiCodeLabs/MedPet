@@ -4,11 +4,12 @@ import sys
 import os
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from components.ui import page_header
+from components.ui import page_header, load_css
 from utils.export import generate_excel_download, generate_csv_download
 from services.api_client import get_consultas
 
-st.set_page_config(page_title="Relatórios - MedPet", page_icon="📊", layout="wide")
+st.set_page_config(page_title="Relatórios - MedPet", page_icon="📁", layout="wide")
+load_css()
 
 if "logado" not in st.session_state or not st.session_state["logado"]:
     st.warning("Você precisa fazer login para acessar esta página.")

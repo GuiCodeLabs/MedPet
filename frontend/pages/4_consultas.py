@@ -4,10 +4,11 @@ import sys
 import os
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from components.ui import page_header
+from components.ui import page_header, load_css
 from services.api_client import get_consultas, get_pets, create_consulta
 
 st.set_page_config(page_title="Consultas - MedPet", page_icon="🩺", layout="wide")
+load_css()
 
 if "logado" not in st.session_state or not st.session_state["logado"]:
     st.warning("Você precisa fazer login para acessar esta página.")
@@ -33,7 +34,13 @@ with col1:
         
         submit = st.form_submit_button("Agendar", type="primary", width="stretch")
         if submit:
-            if pet_selecionado:
+            erros = []
+            if not pet_selecionado:
+                erros.append("Selecione um pet válido.")
+            if not motivo:
+                erros.append("O motivo da consulta é obrigatório.")
+                
+            if not erros:
                 create_consulta({
                     "data": f"{data_hora} {hora}",
                     "pet_id": pet_selecionado,
@@ -44,7 +51,8 @@ with col1:
                 st.success("Consulta agendada com sucesso!")
                 st.rerun()
             else:
-                st.error("Selecione um pet.")
+                for erro in erros:
+                    st.error(erro)
 
 with col2:
     st.subheader("Histórico e Próximas Consultas")

@@ -1,21 +1,23 @@
-﻿import streamlit as st
+import streamlit as st
+import os
+
+def load_css():
+    """Carrega o arquivo CSS estático e injeta no Streamlit."""
+    css_file = os.path.join(os.path.dirname(__file__), '..', 'assets', 'style.css')
+    with open(css_file) as f:
+        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
 def metric_card(title, value, icon, color="blue"):
-    """
-    Renderiza um card de mÃ©trica customizado simulando o layout do Tailwind.
-    Como Streamlit nÃ£o permite injetar Tailwind puro facilmente sem iframes,
-    usamos st.metric encapsulado ou HTML nativo via st.markdown
-    """
-    
+    """Renderiza um card de métrica customizado."""
     st.markdown(
         f"""
-        <div style="background-color: white; padding: 20px; border-radius: 10px; border: 1px solid #e0e3e5; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
-            <div>
-                <p style="color: #727783; font-size: 12px; margin: 0 0 4px 0;">{title}</p>
-                <p style="color: #191c1e; font-size: 24px; font-weight: 600; margin: 0;">{value}</p>
+        <div class="metric-card">
+            <div class="metric-card-content">
+                <p class="metric-title">{title}</p>
+                <p class="metric-value">{value}</p>
             </div>
-            <div style="background-color: #f2f4f6; padding: 10px; border-radius: 8px;">
-                <span style="font-size: 20px;">{icon}</span>
+            <div class="metric-card-icon">
+                <span>{icon}</span>
             </div>
         </div>
         """,
@@ -23,6 +25,6 @@ def metric_card(title, value, icon, color="blue"):
     )
 
 def page_header(title, description):
-    """Renderiza o cabeÃ§alho padronizado da pÃ¡gina"""
+    """Renderiza o cabeçalho padronizado da página"""
     st.markdown(f"## {title}")
-    st.markdown(f"<p style='color: #727783; margin-top: -10px; margin-bottom: 20px;'>{description}</p>", unsafe_allow_html=True)
+    st.markdown(f"<p class='page-header-desc'>{description}</p>", unsafe_allow_html=True)

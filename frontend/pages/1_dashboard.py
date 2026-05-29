@@ -4,10 +4,11 @@ import sys
 import os
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from components.ui import metric_card, page_header
+from components.ui import metric_card, page_header, load_css
 from services.api_client import get_consultas, get_pets, get_tutores
 
 st.set_page_config(page_title="Dashboard - MedPet", page_icon="🐾", layout="wide")
+load_css()
 
 if "logado" not in st.session_state or not st.session_state["logado"]:
     st.warning("Você precisa fazer login para acessar esta página.")

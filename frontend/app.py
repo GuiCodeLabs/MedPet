@@ -1,8 +1,10 @@
 import streamlit as st
 from services.api_client import login
+from components.ui import load_css
 
 # Configuração da Página
 st.set_page_config(page_title="MedPet", page_icon="🐾", layout="wide")
+load_css()
 
 # Inicializar estado de sessão
 if "logado" not in st.session_state:
@@ -28,8 +30,8 @@ if not st.session_state["logado"]:
     # Renderizar tela de Login centralizada simulando Tailwind (front.md)
     col1, col2, col3 = st.columns([1, 1.5, 1])
     with col2:
-        st.markdown("<h1 style='text-align: center; color: #00478d;'>MedPet 🐾</h1>", unsafe_allow_html=True)
-        st.markdown("<p style='text-align: center; color: #727783;'>Acesse sua conta para gerenciar sua clínica.</p>", unsafe_allow_html=True)
+        st.markdown("<h1 class='login-title'>MedPet 🐾</h1>", unsafe_allow_html=True)
+        st.markdown("<p class='login-subtitle'>Acesse sua conta para gerenciar sua clínica.</p>", unsafe_allow_html=True)
         
         with st.container():
             st.text_input("E-mail", key="email_input", placeholder="contato@exemplo.com.br")

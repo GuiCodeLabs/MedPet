@@ -4,10 +4,12 @@ import sys
 import os
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from components.ui import page_header
+from utils.validators import is_valid_cpf, is_valid_email, is_valid_phone
+from components.ui import page_header, load_css
 from services.api_client import get_tutores, create_tutor
 
 st.set_page_config(page_title="Tutores - MedPet", page_icon="👥", layout="wide")
+load_css()
 
 if "logado" not in st.session_state or not st.session_state["logado"]:
     st.warning("Você precisa fazer login para acessar esta página.")
@@ -27,7 +29,17 @@ with col1:
         
         submit = st.form_submit_button("Salvar Tutor", type="primary", width="stretch")
         if submit:
-            if nome and cpf:
+            erros = []
+            if not nome:
+                erros.append("O nome é obrigatório.")
+            if not cpf or not is_valid_cpf(cpf):
+                erros.append("CPF inválido. Certifique-se de digitar 11 dígitos.")
+            if email and not is_valid_email(email):
+                erros.append("E-mail inválido.")
+            if telefone and not is_valid_phone(telefone):
+                erros.append("Telefone inválido. Insira o DDD.")
+
+            if not erros:
                 create_tutor({
                     "nome": nome,
                     "cpf": cpf,
@@ -37,7 +49,8 @@ with col1:
                 st.success(f"Tutor {nome} cadastrado com sucesso!")
                 st.rerun()
             else:
-                st.error("Preencha os campos obrigatórios.")
+                for erro in erros:
+                    st.error(erro)
 
 with col2:
     st.subheader("Tutores Cadastrados")

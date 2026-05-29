@@ -1,5 +1,6 @@
 import streamlit as st
 import os
+import time
 
 BASE_URL = os.getenv("API_URL", "http://localhost:8000")
 
@@ -12,6 +13,8 @@ def init_mock_db():
         st.session_state["db_consultas"] = []
 
 def login(email, senha):
+    """Simula um POST /api/v1/auth/login"""
+    time.sleep(0.6)  # Simula latência de rede
     if email == "admin@medpet.com" and senha == "admin":
         return {"token": "mock_token_123", "perfil": "admin", "nome": "Admin"}
     elif email and senha:
@@ -19,10 +22,14 @@ def login(email, senha):
     return None
 
 def get_tutores():
+    """Simula um GET /api/v1/tutores"""
+    time.sleep(0.3)
     init_mock_db()
     return st.session_state["db_tutores"]
 
 def create_tutor(dados):
+    """Simula um POST /api/v1/tutores"""
+    time.sleep(0.5)
     init_mock_db()
     novo_id = len(st.session_state["db_tutores"]) + 1
     dados["id"] = novo_id
@@ -30,10 +37,14 @@ def create_tutor(dados):
     return dados
 
 def get_pets():
+    """Simula um GET /api/v1/pets"""
+    time.sleep(0.3)
     init_mock_db()
     return st.session_state["db_pets"]
 
 def create_pet(dados):
+    """Simula um POST /api/v1/pets"""
+    time.sleep(0.5)
     init_mock_db()
     novo_id = len(st.session_state["db_pets"]) + 1
     dados["id"] = novo_id
@@ -41,10 +52,14 @@ def create_pet(dados):
     return dados
 
 def get_consultas():
+    """Simula um GET /api/v1/consultas"""
+    time.sleep(0.3)
     init_mock_db()
     return st.session_state["db_consultas"]
 
 def create_consulta(dados):
+    """Simula um POST /api/v1/consultas"""
+    time.sleep(0.5)
     init_mock_db()
     novo_id = len(st.session_state["db_consultas"]) + 1
     dados["id"] = novo_id
@@ -52,7 +67,8 @@ def create_consulta(dados):
     return dados
 
 def get_usuarios():
-    # Mantém mockado apenas para demonstração do admin
+    """Simula um GET /api/v1/usuarios (Apenas Admin)"""
+    time.sleep(0.4)
     return [
         {"id": 1, "nome": "Admin", "email": "admin@medpet.com", "perfil": "admin"}
     ]
