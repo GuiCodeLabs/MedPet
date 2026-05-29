@@ -22,3 +22,17 @@ class ClienteRepository:
 
     def list_all(self):
         return self.db.query(Cliente).all()
+
+    def update(self, cliente: Cliente, updated_data: dict):
+        for key, value in updated_data.items():
+            setattr(cliente, key, value)
+
+        self.db.commit()
+        self.db.refresh(cliente)
+        return cliente
+        
+    def delete(self, cliente: Cliente):
+        self.db.delete(cliente)
+        self.db.commit()
+    
+    
