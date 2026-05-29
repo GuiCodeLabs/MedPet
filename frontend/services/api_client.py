@@ -30,7 +30,7 @@ def login(email, senha):
             st.error(erro_detalhe)
             return None
             
-    except requests.exceptions.ConnectionError:
+    except requests.exceptions.RequestException:
         st.error("Erro de conexão: Garanta que o backend FastAPI está rodando na porta 8000!")
         return None
 
@@ -39,7 +39,7 @@ def get_tutores():
     try:
         response = requests.get(f"{BASE_URL}/clientes/", timeout=5)
         return response.json() if response.status_code == 200 else []
-    except requests.exceptions.ConnectionError:
+    except requests.exceptions.RequestException:
         return []
 
 def create_tutor(dados):
@@ -52,7 +52,7 @@ def create_tutor(dados):
             erro = response.json().get("detail", "Erro ao cadastrar tutor.")
             st.error(f"Erro: {erro}")
             return None
-    except requests.exceptions.ConnectionError:
+    except requests.exceptions.RequestException:
         st.error("Erro ao conectar com a API.")
         return None
 
@@ -67,7 +67,7 @@ def get_pets():
                 pet["tutor_id"] = pet.pop("cliente_id", None)
             return pets
         return []
-    except requests.exceptions.ConnectionError:
+    except requests.exceptions.RequestException:
         return []
 
 def create_pet(dados):
@@ -88,14 +88,14 @@ def create_pet(dados):
             erro = response.json().get("detail", "Erro ao cadastrar pet.")
             st.error(f"Erro: {erro}")
             return None
-    except requests.exceptions.ConnectionError:
+    except requests.exceptions.RequestException:
         st.error("Erro ao conectar com a API.")
         return None
 
 @st.cache_data(ttl=30)
 def get_consultas():
     try:
-        response = requests.get(f"{BASE_URL}/atendimentos/")
+        response = requests.get(f"{BASE_URL}/atendimentos/", timeout=5)
         if response.status_code == 200:
             consultas = response.json()
             
@@ -107,7 +107,7 @@ def get_consultas():
                 c["pet"] = pets_map.get(c["pet_id"], "Desconhecido")
             return consultas
         return []
-    except requests.exceptions.ConnectionError:
+    except requests.exceptions.RequestException:
         return []
 
 def create_consulta(dados):
@@ -132,7 +132,7 @@ def create_consulta(dados):
             erro = response.json().get("detail", "Erro ao agendar consulta.")
             st.error(f"Erro: {erro}")
             return None
-    except requests.exceptions.ConnectionError:
+    except requests.exceptions.RequestException:
         st.error("Erro ao conectar com a API.")
         return None
 
@@ -147,7 +147,7 @@ def update_consulta(consulta_id, dados):
             erro = response.json().get("detail", "Erro ao atualizar consulta.")
             st.error(f"Erro: {erro}")
             return None
-    except requests.exceptions.ConnectionError:
+    except requests.exceptions.RequestException:
         st.error("Erro ao conectar com a API.")
         return None
 
@@ -155,7 +155,7 @@ def get_usuarios():
     try:
         response = requests.get(f"{BASE_URL}/usuarios/", timeout=5)
         return response.json() if response.status_code == 200 else []
-    except requests.exceptions.ConnectionError:
+    except requests.exceptions.RequestException:
         return []
 
 def create_usuario(dados):
@@ -175,6 +175,6 @@ def create_usuario(dados):
             erro = response.json().get("detail", "Erro ao cadastrar usuário.")
             st.error(f"Erro: {erro}")
             return None
-    except requests.exceptions.ConnectionError:
+    except requests.exceptions.RequestException:
         st.error("Erro ao conectar com a API.")
         return None

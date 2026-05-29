@@ -1,5 +1,6 @@
 # app/main.py
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 from app.database import Base, engine, get_db
 from app.models import usuario, cliente, pet, atendimento  # noqa: F401
@@ -9,6 +10,15 @@ from app.core.security import get_password_hash
 from app.models.usuario import Usuario
 
 app = FastAPI(title="MEDPET - Clínica Veterinária")
+
+# CORS — permite que o frontend rode em qualquer máquina da rede
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 app.add_middleware(GZipMiddleware, minimum_size=500)
 
 # Cria as tabelas do banco
