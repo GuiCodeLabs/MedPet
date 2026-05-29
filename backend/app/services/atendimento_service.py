@@ -24,6 +24,11 @@ class AtendimentoService:
             descricao=atendimento_in.descricao,
             pet_id=atendimento_in.pet_id,
         )
+        # Atribuir data e status se fornecidos na requisição
+        if atendimento_in.data is not None:
+            db_atendimento.data = atendimento_in.data
+        if atendimento_in.status is not None:
+            db_atendimento.status = atendimento_in.status
         return self.repository.create(db_atendimento)
 
     def list_all(self):
@@ -52,6 +57,10 @@ class AtendimentoService:
             update_data["descricao"] = atendimento_in.descricao
         if atendimento_in.pet_id is not None:
             update_data["pet_id"] = atendimento_in.pet_id
+        if atendimento_in.data is not None:
+            update_data["data"] = atendimento_in.data
+        if atendimento_in.status is not None:
+            update_data["status"] = atendimento_in.status
         
         return self.repository.update(atendimento_id, update_data)
 

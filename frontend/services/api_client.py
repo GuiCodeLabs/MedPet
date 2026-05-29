@@ -107,9 +107,6 @@ def get_consultas():
                 
             for c in consultas:
                 c["pet"] = pets_map.get(c["pet_id"], "Desconhecido")
-                c["status"] = "Agendada"
-                if "descricao" in c and c["descricao"]:
-                    c["data"] = c["descricao"] # Restaurando a data agendada salva na descrição
             return consultas
         return []
     except requests.exceptions.ConnectionError:
@@ -123,12 +120,33 @@ def create_consulta(dados):
             "descricao": dados.get("descricao", ""),
             "pet_id": dados["pet_id"]
         }
+        # Enviar data agendada se fornecida
+        if dados.get("data"):
+            payload["data"] = dados["data"]
+        # Enviar status se fornecido
+        if dados.get("status"):
+            payload["status"] = dados["status"]
         response = requests.post(f"{BASE_URL}/atendimentos/", json=payload, timeout=5)
         if response.status_code == 201:
             st.cache_data.clear()
             return response.json()
         else:
             erro = response.json().get("detail", "Erro ao agendar consulta.")
+            st.error(f"Erro: {erro}")
+            return None
+    except requests.exceptions.ConnectionError:
+        st.error("Erro ao conectar com a API.")
+        return None
+
+def update_consulta(consulta_id, dados):
+    """PUT /atendimentos/{id} - Atualizar consulta existente"""
+    try:
+        response = requests.put(f"{BASE_URL}/atendimentos/{consulta_id}", json=dados, timeout=5)
+        if response.status_code == 200:
+            st.cache_data.clear()
+            return response.json()
+        else:
+            erro = response.json().get("detail", "Erro ao atualizar consulta.")
             st.error(f"Erro: {erro}")
             return None
     except requests.exceptions.ConnectionError:
