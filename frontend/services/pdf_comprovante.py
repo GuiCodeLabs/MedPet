@@ -180,4 +180,4 @@ def gerar_comprovante(consulta, pet_info=None, tutor_info=None):
     pdf.cell(0, 5, "Assinatura do(a) Veterinário(a)", align="C", new_x="LMARGIN", new_y="NEXT")
 
     # ── Gerar bytes ──
-    return pdf.output()
+    return bytes(pdf.output())
