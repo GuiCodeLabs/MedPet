@@ -14,7 +14,7 @@ class Pet(Base):
     raca = Column(String(50), nullable=True)
     idade = Column(Integer, nullable=True)
     peso = Column(Float, nullable=True)
-    cliente_id = Column(Integer, ForeignKey("clientes.id"), nullable=False)
+    cliente_id = Column(Integer, ForeignKey("clientes.id"), index=True, nullable=False)
     criado_em = Column(DateTime(timezone=True), server_default=func.now())
 
     # Relacionamento de volta para o tutor (Cliente)

@@ -99,11 +99,9 @@ def get_consultas():
         if response.status_code == 200:
             consultas = response.json()
             
-            # Buscar pets para mapear o nome na tabela
-            pets_resp = requests.get(f"{BASE_URL}/pets/")
-            pets_map = {}
-            if pets_resp.status_code == 200:
-                pets_map = {p["id"]: p["nome"] for p in pets_resp.json()}
+            # Buscar pets (utiliza o cache da função já existente) para mapear o nome na tabela
+            pets = get_pets()
+            pets_map = {p["id"]: p["nome"] for p in pets} if pets else {}
                 
             for c in consultas:
                 c["pet"] = pets_map.get(c["pet_id"], "Desconhecido")

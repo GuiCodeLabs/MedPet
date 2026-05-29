@@ -11,9 +11,9 @@ class Atendimento(Base):
     id = Column(Integer, primary_key=True, index=True)
     motivo = Column(String(100), nullable=False)  # Ex: Consulta, Vacina, Cirurgia
     descricao = Column(String(500), nullable=True)  # Observações clínicas
-    pet_id = Column(Integer, ForeignKey("pets.id"), nullable=False)
-    data = Column(DateTime(timezone=True), server_default=func.now())
-    status = Column(String(20), default="Agendada")
+    pet_id = Column(Integer, ForeignKey("pets.id"), index=True, nullable=False)
+    data = Column(DateTime(timezone=True), server_default=func.now(), index=True)
+    status = Column(String(20), default="Agendada", index=True)
 
     # Relacionamento de volta para o pet atendido
     pet = relationship("Pet", back_populates="atendimentos")

@@ -1,5 +1,6 @@
 # app/main.py
 from fastapi import FastAPI
+from fastapi.middleware.gzip import GZipMiddleware
 from app.database import Base, engine, get_db
 from app.models import usuario, cliente, pet, atendimento  # noqa: F401
 from app.routes import usuario_routes, auth_routes, cliente_routes, pet_routes, atendimento_routes
@@ -8,6 +9,7 @@ from app.core.security import get_password_hash
 from app.models.usuario import Usuario
 
 app = FastAPI(title="MEDPET - Clínica Veterinária")
+app.add_middleware(GZipMiddleware, minimum_size=500)
 
 # Cria as tabelas do banco
 Base.metadata.create_all(bind=engine)
