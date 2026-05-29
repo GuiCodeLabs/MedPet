@@ -18,11 +18,14 @@ page_header(f"Bom dia, {st.session_state.get('nome', 'Usuário')}.", "Aqui está
 
 col1, col2, col3, _ = st.columns([2, 2, 2, 4])
 with col1:
-    st.button("➕ Cadastrar Tutor", width="stretch")
+    if st.button("➕ Cadastrar Tutor", width="stretch"):
+        st.switch_page("pages/2_tutores.py")
 with col2:
-    st.button("🐾 Cadastrar Pet", width="stretch")
+    if st.button("🐾 Cadastrar Pet", width="stretch"):
+        st.switch_page("pages/3_pets.py")
 with col3:
-    st.button("📅 Nova Consulta", width="stretch", type="primary")
+    if st.button("📅 Nova Consulta", width="stretch", type="primary"):
+        st.switch_page("pages/4_consultas.py")
 
 st.markdown("---")
 
