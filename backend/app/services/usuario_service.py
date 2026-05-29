@@ -6,6 +6,7 @@ from app.schemas.usuario_schema import UsuarioCreate
 from app.schemas.auth_schema import LoginRequest, TokenResponse
 from app.core.security import get_password_hash, verify_password, create_access_token
 
+
 class UsuarioService:
     def __init__(self, db: Session):
         self.repository = UsuarioRepository(db)
@@ -22,7 +23,7 @@ class UsuarioService:
             email=user_in.email,
             senha_hash=hashed_password,
             perfil=user_in.perfil,
-            ativo=user_in.ativo
+            ativo=user_in.ativo,
         )
         return self.repository.create(db_user)
 
@@ -41,9 +42,7 @@ class UsuarioService:
         access_token = create_access_token(data=token_data)
 
         return TokenResponse(
-            access_token=access_token,
-            perfil=usuario.perfil,
-            nome=usuario.nome
+            access_token=access_token, perfil=usuario.perfil, nome=usuario.nome
         )
 
     def list_all(self):

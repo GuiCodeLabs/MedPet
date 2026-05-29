@@ -4,6 +4,7 @@ from app.repositories.cliente_repository import ClienteRepository
 from app.models.pet import Pet
 from app.schemas.pet_schema import PetCreate
 
+
 class PetService:
     def __init__(self, db: Session):
         self.repository = PetRepository(db)
@@ -24,7 +25,7 @@ class PetService:
             raca=pet_in.raca,
             idade=pet_in.idade,
             peso=pet_in.peso,
-            cliente_id=pet_in.cliente_id
+            cliente_id=pet_in.cliente_id,
         )
         return self.repository.create(db_pet)
 

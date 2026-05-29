@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 from app.models.cliente import Cliente
 
+
 class ClienteRepository:
     def __init__(self, db: Session):
         self.db = db

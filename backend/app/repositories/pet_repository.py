@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 from app.models.pet import Pet
 
+
 class PetRepository:
     def __init__(self, db: Session):
         self.db = db

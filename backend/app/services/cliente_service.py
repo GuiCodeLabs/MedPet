@@ -3,6 +3,7 @@ from app.repositories.cliente_repository import ClienteRepository
 from app.models.cliente import Cliente
 from app.schemas.cliente_schema import ClienteCreate
 
+
 class ClienteService:
     def __init__(self, db: Session):
         self.repository = ClienteRepository(db)
@@ -26,7 +27,7 @@ class ClienteService:
             cpf=cliente_in.cpf,
             email=cliente_in.email,
             telefone=cliente_in.telefone,
-            endereco=cliente_in.endereco
+            endereco=cliente_in.endereco,
         )
         return self.repository.create(db_cliente)
 

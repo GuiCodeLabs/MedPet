@@ -1,6 +1,7 @@
 from pydantic import BaseModel, EmailStr
 from datetime import datetime
-from typing import Optional, List
+from typing import Optional
+
 
 class ClienteBase(BaseModel):
     nome: str
@@ -9,8 +10,10 @@ class ClienteBase(BaseModel):
     telefone: Optional[str] = None
     endereco: Optional[str] = None
 
+
 class ClienteCreate(ClienteBase):
     pass
+
 
 class ClienteResponse(ClienteBase):
     id: int
