@@ -12,6 +12,10 @@ class AtendimentoBase(BaseModel):
 class AtendimentoCreate(AtendimentoBase):
     pass
 
+class AtendimentoUpdate(BaseModel):
+    motivo: Optional[str] = None
+    descricao: Optional[str] = None
+    pet_id: Optional[int] = None
 
 class AtendimentoResponse(AtendimentoBase):
     id: int

@@ -1,8 +1,8 @@
 # app/main.py
 from fastapi import FastAPI
 from app.database import Base, engine, get_db
-from app.models import atendimento, cliente, pet, usuario  # noqa: F401
-from app.routes import usuario_routes, auth_routes, cliente_routes, pet_routes  
+from app.models import usuario, cliente, pet, atendimento  # noqa: F401
+from app.routes import usuario_routes, auth_routes, cliente_routes, pet_routes, atendimento_routes
 from app.repositories.usuario_repository import UsuarioRepository
 from app.core.security import get_password_hash
 from app.models.usuario import Usuario
@@ -36,6 +36,7 @@ app.include_router(usuario_routes.router)
 app.include_router(auth_routes.router)
 app.include_router(cliente_routes.router)
 app.include_router(pet_routes.router)
+app.include_router(atendimento_routes.router)
 
 
 @app.get("/")

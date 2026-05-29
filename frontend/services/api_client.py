@@ -93,44 +93,39 @@ def create_pet(dados):
 @st.cache_data(ttl=30)
 def get_consultas():
     try:
-        response = requests.get(f"{BASE_URL}/atendimentos/", timeout=5)
+        response = requests.get(f"{BASE_URL}/atendimentos/")
         if response.status_code == 200:
             consultas = response.json()
             
-            # Reutilizar o cache de pets ao invés de fazer outra request
-            pets = get_pets()
-            pets_map = {p["id"]: p["nome"] for p in pets}
+            # Buscar pets para mapear o nome na tabela
+            pets_resp = requests.get(f"{BASE_URL}/pets/")
+            pets_map = {}
+            if pets_resp.status_code == 200:
+                pets_map = {p["id"]: p["nome"] for p in pets_resp.json()}
                 
             for c in consultas:
                 c["pet"] = pets_map.get(c["pet_id"], "Desconhecido")
                 c["status"] = "Agendada"
                 if "descricao" in c and c["descricao"]:
-                    c["data"] = c["descricao"]
+                    c["data"] = c["descricao"] # Restaurando a data agendada salva na descrição
             return consultas
         return []
     except requests.exceptions.ConnectionError:
         return []
 
 def create_consulta(dados):
+    """POST /atendimentos/ - Criar nova consulta"""
     try:
         payload = {
             "motivo": dados["motivo"],
             "descricao": dados.get("data", ""),
             "pet_id": dados["pet_id"]
         }
-        response = requests.post(f"{BASE_URL}/atendimentos/", json=payload, timeout=5)
-        if response.status_code == 201:
-            st.cache_data.clear()
-            return response.json()
-        else:
-            erro = response.json().get("detail", "Erro ao agendar consulta.")
-            st.error(f"Erro: {erro}")
-            return None
+        response = requests.post(f"{BASE_URL}/atendimentos/", json=payload)
+        return response.json() if response.status_code == 201 else None
     except requests.exceptions.ConnectionError:
-        st.error("Erro ao conectar com a API.")
         return None
 
-@st.cache_data(ttl=30)
 def get_usuarios():
     try:
         response = requests.get(f"{BASE_URL}/usuarios/", timeout=5)
