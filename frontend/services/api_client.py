@@ -1,17 +1,8 @@
 import streamlit as st
 import os
-import time
 import requests
 
 BASE_URL = os.getenv("API_URL", "http://localhost:8000")
-
-def init_mock_db():
-    if "db_tutores" not in st.session_state:
-        st.session_state["db_tutores"] = []
-    if "db_pets" not in st.session_state:
-        st.session_state["db_pets"] = []
-    if "db_consultas" not in st.session_state:
-        st.session_state["db_consultas"] = []
 
 def login(email, senha):
     """Conecta diretamente com o endpoint de autenticação do backend real"""
@@ -43,53 +34,104 @@ def login(email, senha):
         return None
 
 def get_tutores():
-    """Simula um GET /api/v1/tutores"""
-    time.sleep(0.3)
-    init_mock_db()
-    return st.session_state["db_tutores"]
+    try:
+        response = requests.get(f"{BASE_URL}/clientes/")
+        return response.json() if response.status_code == 200 else []
+    except requests.exceptions.ConnectionError:
+        st.error("Erro ao conectar com a API.")
+        return []
 
 def create_tutor(dados):
-    """Simula um POST /api/v1/tutores"""
-    time.sleep(0.5)
-    init_mock_db()
-    novo_id = len(st.session_state["db_tutores"]) + 1
-    dados["id"] = novo_id
-    st.session_state["db_tutores"].append(dados)
-    return dados
+    try:
+        response = requests.post(f"{BASE_URL}/clientes/", json=dados)
+        return response.json() if response.status_code == 201 else None
+    except requests.exceptions.ConnectionError:
+        st.error("Erro ao conectar com a API.")
+        return None
 
 def get_pets():
-    """Simula um GET /api/v1/pets"""
-    time.sleep(0.3)
-    init_mock_db()
-    return st.session_state["db_pets"]
+    try:
+        response = requests.get(f"{BASE_URL}/pets/")
+        if response.status_code == 200:
+            pets = response.json()
+            for pet in pets:
+                # O Frontend espera "tutor_id", mas o backend retorna "cliente_id"
+                pet["tutor_id"] = pet.pop("cliente_id", None)
+            return pets
+        return []
+    except requests.exceptions.ConnectionError:
+        return []
 
 def create_pet(dados):
-    """Simula um POST /api/v1/pets"""
-    time.sleep(0.5)
-    init_mock_db()
-    novo_id = len(st.session_state["db_pets"]) + 1
-    dados["id"] = novo_id
-    st.session_state["db_pets"].append(dados)
-    return dados
+    try:
+        payload = {
+            "nome": dados["nome"],
+            "especie": dados["especie"],
+            "raca": dados.get("raca", ""),
+            "cliente_id": dados["tutor_id"]
+        }
+        response = requests.post(f"{BASE_URL}/pets/", json=payload)
+        return response.json() if response.status_code == 201 else None
+    except requests.exceptions.ConnectionError:
+        return None
 
 def get_consultas():
-    """Simula um GET /api/v1/consultas"""
-    time.sleep(0.3)
-    init_mock_db()
-    return st.session_state["db_consultas"]
+    try:
+        response = requests.get(f"{BASE_URL}/atendimentos/")
+        if response.status_code == 200:
+            consultas = response.json()
+            
+            # Buscar pets para mapear o nome na tabela
+            pets_resp = requests.get(f"{BASE_URL}/pets/")
+            pets_map = {}
+            if pets_resp.status_code == 200:
+                pets_map = {p["id"]: p["nome"] for p in pets_resp.json()}
+                
+            for c in consultas:
+                c["pet"] = pets_map.get(c["pet_id"], "Desconhecido")
+                c["status"] = "Agendada"
+                if "descricao" in c and c["descricao"]:
+                    c["data"] = c["descricao"] # Restaurando a data agendada salva na descrição
+            return consultas
+        return []
+    except requests.exceptions.ConnectionError:
+        return []
 
 def create_consulta(dados):
-    """Simula um POST /api/v1/consultas"""
-    time.sleep(0.5)
-    init_mock_db()
-    novo_id = len(st.session_state["db_consultas"]) + 1
-    dados["id"] = novo_id
-    st.session_state["db_consultas"].append(dados)
-    return dados
+    try:
+        payload = {
+            "motivo": dados["motivo"],
+            "descricao": dados.get("data", ""), # Salvando a data agendada no campo descrição pois o backend marca a data de criação automaticamente
+            "pet_id": dados["pet_id"]
+        }
+        response = requests.post(f"{BASE_URL}/atendimentos/", json=payload)
+        return response.json() if response.status_code == 201 else None
+    except requests.exceptions.ConnectionError:
+        return None
 
 def get_usuarios():
-    """Simula um GET /api/v1/usuarios (Apenas Admin)"""
-    time.sleep(0.4)
-    return [
-        {"id": 1, "nome": "Admin", "email": "admin@medpet.com", "perfil": "admin"}
-    ]
+    try:
+        response = requests.get(f"{BASE_URL}/usuarios/")
+        return response.json() if response.status_code == 200 else []
+    except requests.exceptions.ConnectionError:
+        return []
+
+def create_usuario(dados):
+    """Cria um novo usuário no banco de dados via POST /usuarios/"""
+    try:
+        payload = {
+            "nome": dados["nome"],
+            "email": dados["email"],
+            "perfil": dados.get("perfil", "atendente"),
+            "senha": dados["senha"]
+        }
+        response = requests.post(f"{BASE_URL}/usuarios/", json=payload)
+        if response.status_code == 201:
+            return response.json()
+        else:
+            erro = response.json().get("detail", "Erro ao cadastrar usuário.")
+            st.error(f"Erro: {erro}")
+            return None
+    except requests.exceptions.ConnectionError:
+        st.error("Erro ao conectar com a API.")
+        return None
