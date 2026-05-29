@@ -1,0 +1,67 @@
+flowchart TD
+    subgraph Frontend["💻 Camada de Apresentação (Streamlit Frontend)"]
+        UI["Tela Web (app.py)"]
+        Client["Cliente de Integração HTTP (requests)"]
+        UI --> Client
+    end
+
+    subgraph Backend["🚀 Camada de Negócio (FastAPI Backend)"]
+        subgraph Routes["🔌 API Controllers (Routes)"]
+            AuthRoutes["auth_routes.py"]
+            UserRoutes["usuario_routes.py"]
+            ClientRoutes["cliente_routes.py"]
+            PetRoutes["pet_routes.py"]
+            AtendRoutes["atendimento_routes.py"]
+        end
+
+        subgraph Core["⚙️ Core & Segurança"]
+            Sec["security.py (JWT / bcrypt)"]
+            Deps["dependencies.py (get_db / get_current_user)"]
+        end
+
+        subgraph Services["🧬 Camada de Serviço (Services)"]
+            AuthService["auth_service.py"]
+            UserService["usuario_service.py"]
+            ClienteService["cliente_service.py"]
+            PetService["pet_service.py"]
+            AtendimentoService["atendimento_service.py"]
+        end
+
+        subgraph Repos["🗄️ Camada de Persistência (Repositories)"]
+            UserRepo["usuario_repository.py"]
+            ClienteRepo["cliente_repository.py"]
+            PetRepo["pet_repository.py"]
+            AtendRepo["atendimento_repository.py"]
+        end
+    end
+
+    subgraph Database["💾 Banco de Dados"]
+        SQLiteDB[("clinica_veterinaria.db (SQLite)")]
+    end
+
+    %% Relações do Frontend
+    Client -->|"Requisições HTTP REST (JSON)"| Routes
+
+    %% Relações dos Routes
+    AuthRoutes --> AuthService
+    UserRoutes --> UserService
+    ClientRoutes --> ClienteService
+    PetRoutes --> PetService
+    AtendRoutes --> AtendimentoService
+    
+    Routes -.->|Valida tokens| Deps
+    Deps -.->|Injeta decodificação JWT| Sec
+
+    %% Relações dos Services
+    AuthService --> UserRepo
+    UserService --> UserRepo
+    ClienteService --> ClienteRepo
+    PetService --> PetRepo
+    AtendimentoService --> AtendRepo
+    AtendimentoService --> PetRepo
+
+    %% Relações dos Repositories
+    UserRepo -->|SQLAlchemy ORM| SQLiteDB
+    ClienteRepo -->|SQLAlchemy ORM| SQLiteDB
+    PetRepo -->|SQLAlchemy ORM| SQLiteDB
+    AtendRepo -->|SQLAlchemy ORM| SQLiteDB
