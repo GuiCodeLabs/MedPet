@@ -34,20 +34,23 @@ with col1:
                 erros.append("O nome é obrigatório.")
             if not cpf or not is_valid_cpf(cpf):
                 erros.append("CPF inválido. Certifique-se de digitar 11 dígitos.")
-            if email and not is_valid_email(email):
+            if not email:
+                erros.append("O e-mail é obrigatório.")
+            elif not is_valid_email(email):
                 erros.append("E-mail inválido.")
             if telefone and not is_valid_phone(telefone):
                 erros.append("Telefone inválido. Insira o DDD.")
 
             if not erros:
-                create_tutor({
+                resultado = create_tutor({
                     "nome": nome,
                     "cpf": cpf,
                     "email": email,
                     "telefone": telefone
                 })
-                st.success(f"Tutor {nome} cadastrado com sucesso!")
-                st.rerun()
+                if resultado:
+                    st.success(f"Tutor {nome} cadastrado com sucesso!")
+                    st.rerun()
             else:
                 for erro in erros:
                     st.error(erro)
