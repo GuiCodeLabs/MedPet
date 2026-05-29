@@ -1,0 +1,64 @@
+flowchart LR
+    %% ── Atores ──
+    admin["👤 Administrador"]
+    func["👤 Funcionário"]
+    vet["👤 Veterinário"]
+
+    %% ── Ordem vertical dos atores ──
+    admin ~~~ func ~~~ vet
+
+    %% ── Módulos do Sistema ──
+    subgraph S1["🔐 Autenticação"]
+        uc01("UC01 · Realizar Login")
+        uc02("UC02 · Cadastrar Usuário")
+    end
+
+    subgraph S2["👥 Gestão de Clientes"]
+        uc03("UC03 · Cadastrar Cliente")
+        uc04("UC04 · Consultar Cliente")
+        uc05("UC05 · Atualizar Cliente")
+        uc06("UC06 · Excluir Cliente")
+    end
+
+    subgraph S3["🐾 Gestão de Pets"]
+        uc07("UC07 · Cadastrar Pet")
+        uc08("UC08 · Consultar Pet")
+        uc09("UC09 · Atualizar Pet")
+        uc10("UC10 · Excluir Pet")
+    end
+
+    subgraph S4["🩺 Atendimentos"]
+        uc11("UC11 · Registrar Atendimento")
+        uc12("UC12 · Consultar Atendimento")
+    end
+
+    %% ── Administrador — acesso total ──
+    admin --> uc01 & uc02
+    admin --> uc03 & uc04 & uc05 & uc06
+    admin --> uc07 & uc08 & uc09 & uc10
+    admin --> uc11 & uc12
+
+    %% ── Funcionário ──
+    func --> uc01
+    func --> uc03 & uc04 & uc05
+    func --> uc07 & uc08 & uc09
+    func --> uc12
+
+    %% ── Veterinário ──
+    vet --> uc01
+    vet --> uc04
+    vet --> uc08 & uc09
+    vet --> uc11 & uc12
+
+    %% ── Estilos ──
+    classDef actorStyle fill:#4A90D9,stroke:#2C5F8A,color:#FFFFFF,font-weight:bold,rx:12,ry:12
+    classDef authStyle fill:#6C5CE7,stroke:#4834D4,color:#FFFFFF,rx:8,ry:8
+    classDef clienteStyle fill:#00B894,stroke:#00896A,color:#FFFFFF,rx:8,ry:8
+    classDef petStyle fill:#FDCB6E,stroke:#E17E00,color:#2D3436,rx:8,ry:8
+    classDef atendStyle fill:#E17055,stroke:#B33939,color:#FFFFFF,rx:8,ry:8
+
+    class admin,func,vet actorStyle
+    class uc01,uc02 authStyle
+    class uc03,uc04,uc05,uc06 clienteStyle
+    class uc07,uc08,uc09,uc10 petStyle
+    class uc11,uc12 atendStyle
